@@ -598,7 +598,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 // ═══════════════════════════════════════════
 //  GEMINI CONFIG
 // ═══════════════════════════════════════════
-const GEMINI_API_KEY = 'AIzaSyDemo_Replace_With_Your_Key'; // <-- Kalitingizni shu yerga yozing
+const GEMINI_API_KEY = 'AIzaSyDemo_Replace_With_Your_Key';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 async function askGemini(prompt) {
@@ -613,9 +613,84 @@ async function askGemini(prompt) {
       return data.candidates[0].content.parts[0].text;
     }
     return null;
-  } catch(e) {
-    return null;
+  } catch(e) { return null; }
+}
+
+// SUPABASE CONFIG
+const SB_URL = 'https://ostmvrztldvrkrbepufa.supabase.co';
+const SB_KEY = 'sb_publishable_WjEzCyna-xlGTkTunWzsSg_6h_Vujoz';
+
+async function sbFetch(path, opts = {}) {
+  const method = opts.method || 'GET';
+  const res = await fetch(SB_URL + '/rest/v1/' + path, {
+    method,
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer !== undefined ? opts.prefer : 'return=representation',
+      ...(opts.headers || {})
+    },
+    body: opts.body || undefined
+  });
+  if (!res.ok) { console.error('SB error', res.status, await res.text()); return null; }
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+async function getTests() { return await sbFetch('tests?select=*&order=created_at.asc') || []; }
+async function getResults() { return await sbFetch('results?select=*&order=finished_at.asc') || []; }
+async function getStudents() { return await sbFetch('students?select=*&order=joined_at.asc') || []; }
+async function getRetakes() { return await sbFetch('retakes?select=*&order=created_at.asc') || []; }
+
+async function saveTestToDB(t, isEdit) {
+  if (isEdit) {
+    return await sbFetch('tests?id=eq.' + encodeURIComponent(t.id), {
+      method: 'PATCH',
+      body: JSON.stringify({ name: t.name, description: t.description, duration: t.duration, status: t.status, questions: t.questions })
+    });
+  } else {
+    return await sbFetch('tests', { method: 'POST', body: JSON.stringify(t) });
   }
+}
+async function deleteTestFromDB(id) {
+  await sbFetch('tests?id=eq.' + encodeURIComponent(id), { method: 'DELETE', prefer: '' });
+}
+async function saveResult(r) {
+  return await sbFetch('results', { method: 'POST', body: JSON.stringify({
+    student_name: r.studentName, login: r.login, test_id: r.testId, test_name: r.testName,
+    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration, answers: r.answers
+  })});
+}
+async function deleteResultsForStudent(studentName, testId) {
+  await sbFetch('results?student_name=eq.' + encodeURIComponent(studentName) + '&test_id=eq.' + encodeURIComponent(testId), { method: 'DELETE', prefer: '' });
+}
+async function deleteResultsByTestId(testId) {
+  await sbFetch('results?test_id=eq.' + encodeURIComponent(testId), { method: 'DELETE', prefer: '' });
+}
+async function saveStudent(s) {
+  const ex = await sbFetch('students?name=eq.' + encodeURIComponent(s.name) + '&select=id');
+  if (ex && ex.length > 0) return;
+  return await sbFetch('students', { method: 'POST', body: JSON.stringify({ name: s.name, login: s.login }) });
+}
+async function saveRetake(r) {
+  return await sbFetch('retakes', { method: 'POST', body: JSON.stringify({
+    student_name: r.studentName, login: r.login, test_id: r.testId, test_name: r.testName, status: 'pending'
+  })});
+}
+async function updateRetakeStatus(id, status) {
+  return await sbFetch('retakes?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status }) });
+}
+
+function normResult(r) {
+  return { studentName: r.student_name, login: r.login, testId: r.test_id, testName: r.test_name,
+    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration, answers: r.answers || {},
+    finishedAt: r.finished_at ? new Date(r.finished_at).toLocaleString('uz-UZ') : '' };
+}
+function normStudent(s) { return { name: s.name, login: s.login, joinedAt: s.joined_at }; }
+function normRetake(r) {
+  return { id: r.id, studentName: r.student_name, login: r.login, testId: r.test_id, testName: r.test_name,
+    status: r.status, requestedAt: r.created_at ? new Date(r.created_at).toLocaleString('uz-UZ') : '' };
 }
 
 // ═══════════════════════════════════════════
@@ -626,23 +701,7 @@ const ADMIN_PASS  = 'admin0505@@';
 const ST_LOGIN    = 'student';
 const ST_PASS     = 'student2026';
 
-// ═══════════════════════════════════════════
-//  LOCALSTORAGE HELPERS
-// ═══════════════════════════════════════════
-function ls(k) { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } }
-function lsSet(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-function getTests() { return ls('th_tests') || []; }
-function setTests(t) { lsSet('th_tests', t); }
-
-function getResults() { return ls('th_results') || []; }
-function setResults(r) { lsSet('th_results', r); }
-
-function getStudents() { return ls('th_students') || []; }
-function setStudents(s) { lsSet('th_students', s); }
-
-function getRetakes() { return ls('th_retakes') || []; }
-function setRetakes(r) { lsSet('th_retakes', r); }
 
 // ═══════════════════════════════════════════
 //  STATE
@@ -719,20 +778,15 @@ function showErr(el, msg) {
 document.getElementById('fnIn').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('lnIn').focus(); });
 document.getElementById('lnIn').addEventListener('keydown', e => { if(e.key==='Enter') doName(); });
 
-function doName() {
+async function doName() {
   const fn = document.getElementById('fnIn').value.trim();
   const ln = document.getElementById('lnIn').value.trim();
   const err = document.getElementById('nameErr');
-  if (!fn || !ln) { showErr(err, 'Ism va familiyani to\'liq kiriting!'); return; }
+  if (!fn || !ln) { showErr(err, "Ism va familiyani to'liq kiriting!"); return; }
   err.style.display = 'none';
   currentFullName = fn + ' ' + ln;
 
-  // Register student if first time
-  let students = getStudents();
-  if (!students.find(s => s.name === currentFullName)) {
-    students.push({ name: currentFullName, login: currentLogin, joinedAt: new Date().toISOString() });
-    setStudents(students);
-  }
+  await saveStudent({ name: currentFullName, login: currentLogin });
 
   document.getElementById('stChip').textContent = currentFullName;
   showScreen('studentScreen');
@@ -753,36 +807,39 @@ function logout() {
 // ═══════════════════════════════════════════
 //  ADMIN PAGES
 // ═══════════════════════════════════════════
-function adminPage(page) {
+async function adminPage(page) {
   document.querySelectorAll('#adminScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#adminScreen .nav-item');
   const pages = ['dashboard','tests','students','results','retake'];
   const idx = pages.indexOf(page);
   if (btns[idx]) btns[idx].classList.add('active');
 
-  updateRetakeBadge();
+  await updateRetakeBadge();
 
   const c = document.getElementById('adminContent');
-  if (page === 'dashboard') c.innerHTML = adminDashboardHTML();
-  else if (page === 'tests') c.innerHTML = adminTestsHTML();
-  else if (page === 'students') c.innerHTML = adminStudentsHTML();
-  else if (page === 'results') c.innerHTML = adminResultsHTML();
-  else if (page === 'retake') c.innerHTML = adminRetakeHTML();
+  c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
+  if (page === 'dashboard') c.innerHTML = await adminDashboardHTML();
+  else if (page === 'tests') c.innerHTML = await adminTestsHTML();
+  else if (page === 'students') c.innerHTML = await adminStudentsHTML();
+  else if (page === 'results') c.innerHTML = await adminResultsHTML();
+  else if (page === 'retake') c.innerHTML = await adminRetakeHTML();
 }
 
-function updateRetakeBadge() {
-  const pending = getRetakes().filter(r => r.status === 'pending').length;
+async function updateRetakeBadge() {
+  const raw = await getRetakes();
+  const pending = raw.filter(r => r.status === 'pending').length;
   const badge = document.getElementById('retakeBadge');
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
   else { badge.style.display = 'none'; }
 }
 
 // DASHBOARD
-function adminDashboardHTML() {
-  const tests = getTests();
-  const results = getResults();
-  const students = getStudents();
-  const retakes = getRetakes().filter(r => r.status === 'pending').length;
+async function adminDashboardHTML() {
+  const [testsRaw, resultsRaw, studentsRaw, retakesRaw] = await Promise.all([getTests(), getResults(), getStudents(), getRetakes()]);
+  const tests = testsRaw;
+  const results = resultsRaw.map(normResult);
+  const students = studentsRaw.map(normStudent);
+  const pendingCount = retakesRaw.filter(r => r.status === 'pending').length;
   const avgScore = results.length ? Math.round(results.reduce((s,r) => s + r.percent, 0) / results.length) : 0;
 
   const recent = results.slice(-6).reverse().map(r => `
@@ -802,8 +859,8 @@ function adminDashboardHTML() {
       <div class="stat-card"><div class="stat-num">${results.length}</div><div class="stat-lbl">Topshirishlar</div></div>
       <div class="stat-card"><div class="stat-num">${avgScore}%</div><div class="stat-lbl">O'rtacha ball</div></div>
     </div>
-    ${retakes > 0 ? `<div style="background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
-      <span>🔔 <strong>${retakes} ta</strong> qayta urinish so'rovi kutilmoqda</span>
+    ${pendingCount > 0 ? `<div style="background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <span>🔔 <strong>${pendingCount} ta</strong> qayta urinish so'rovi kutilmoqda</span>
       <button class="btn btn-ghost btn-sm" onclick="adminPage('retake')">Ko'rish →</button>
     </div>` : ''}
     <div class="card">
@@ -813,8 +870,8 @@ function adminDashboardHTML() {
 }
 
 // TESTS
-function adminTestsHTML() {
-  const tests = getTests();
+async function adminTestsHTML() {
+  const tests = await getTests();
   const rows = tests.map(t => `
     <tr>
       <td><strong>${t.name}</strong></td>
@@ -849,9 +906,10 @@ function adminTestsHTML() {
 }
 
 // STUDENTS
-function adminStudentsHTML() {
-  const students = getStudents();
-  const results = getResults();
+async function adminStudentsHTML() {
+  const [studentsRaw, resultsRaw] = await Promise.all([getStudents(), getResults()]);
+  const students = studentsRaw.map(normStudent);
+  const results = resultsRaw.map(normResult);
   const rows = students.map(s => {
     const sRes = results.filter(r => r.studentName === s.name);
     const avg = sRes.length ? Math.round(sRes.reduce((a,r) => a+r.percent,0)/sRes.length) : null;
@@ -876,11 +934,12 @@ function adminStudentsHTML() {
 }
 
 // RESULTS
-function adminResultsHTML() {
-  const results = getResults().slice().reverse();
+async function adminResultsHTML() {
+  const resultsRaw = await getResults();
+  const results = resultsRaw.map(normResult).reverse();
   const rows = results.map((r,i) => `
     <tr>
-      <td>${results.length - i}</td>
+      <td>${i+1}</td>
       <td><strong>${r.studentName}</strong></td>
       <td>${r.testName}</td>
       <td>${r.correct}/${r.total}</td>
@@ -903,8 +962,9 @@ function adminResultsHTML() {
 }
 
 // RETAKE
-function adminRetakeHTML() {
-  const retakes = getRetakes();
+async function adminRetakeHTML() {
+  const retakesRaw = await getRetakes();
+  const retakes = retakesRaw.map(normRetake);
   const pending = retakes.filter(r => r.status === 'pending');
   const done    = retakes.filter(r => r.status !== 'pending');
 
@@ -942,34 +1002,23 @@ function adminRetakeHTML() {
     </div>` : ''}`;
 }
 
-function approveRetake(id) {
-  const retakes = getRetakes();
-  const r = retakes.find(x => x.id === id);
+async function approveRetake(id) {
+  const retakesRaw = await getRetakes();
+  const r = retakesRaw.find(x => x.id === id);
   if (!r) return;
-  r.status = 'approved';
-  setRetakes(retakes);
-
-  // Remove from results so they can retake
-  const results = getResults().filter(x => !(x.studentName === r.studentName && x.testId === r.testId));
-  setResults(results);
-
+  await updateRetakeStatus(id, 'approved');
+  await deleteResultsForStudent(r.student_name, r.test_id);
   toast('✓ Tasdiqlandi. O\'quvchi qayta ishlashi mumkin', 'success');
   adminPage('retake');
 }
 
-function rejectRetake(id) {
-  const retakes = getRetakes();
-  const r = retakes.find(x => x.id === id);
-  if (!r) return;
-  r.status = 'rejected';
-  setRetakes(retakes);
+async function rejectRetake(id) {
+  await updateRetakeStatus(id, 'rejected');
   toast('So\'rov rad etildi', 'error');
   adminPage('retake');
 }
 
-// ═══════════════════════════════════════════
-//  TEST CRUD
-// ═══════════════════════════════════════════
+// TEST CRUD
 function openAddTest() {
   editingTestId = null;
   questionCount = 0;
@@ -983,8 +1032,9 @@ function openAddTest() {
   addQuestion();
 }
 
-function editTest(id) {
-  const t = getTests().find(x => x.id === id);
+async function editTest(id) {
+  const tests = await getTests();
+  const t = tests.find(x => x.id === id);
   if (!t) return;
   editingTestId = id;
   questionCount = 0;
@@ -1029,7 +1079,7 @@ function removeQuestion(n) {
   if (el) el.remove();
 }
 
-function saveTest() {
+async function saveTest() {
   const name = document.getElementById('mName').value.trim();
   const desc = document.getElementById('mDesc').value.trim();
   const duration = parseInt(document.getElementById('mTime').value) || 30;
@@ -1055,56 +1105,49 @@ function saveTest() {
 
   if (!valid || questions.length === 0) { toast('Barcha savollarni to\'liq to\'ldiring!', 'error'); return; }
 
-  const tests = getTests();
-  if (editingTestId) {
-    const idx = tests.findIndex(t => t.id === editingTestId);
-    if (idx > -1) tests[idx] = { ...tests[idx], name, description: desc, duration, status, questions };
-  } else {
-    tests.push({ id: 'test_' + Date.now(), name, description: desc, duration, status, questions, createdAt: new Date().toISOString() });
-  }
-  setTests(tests);
+  const testObj = { id: editingTestId || ('test_' + Date.now()), name, description: desc, duration, status, questions };
+  await saveTestToDB(testObj, !!editingTestId);
   closeModal();
   toast(editingTestId ? '✓ Test yangilandi' : '✓ Test yaratildi', 'success');
   adminPage('tests');
 }
 
-function deleteTest(id) {
-  openConfirm('Testni o\'chirish', 'Bu testni o\'chirsangiz, barcha natijalar ham o\'chib ketadi. Davom etasizmi?', () => {
-    let tests = getTests().filter(t => t.id !== id);
-    setTests(tests);
-    let results = getResults().filter(r => r.testId !== id);
-    setResults(results);
+async function deleteTest(id) {
+  openConfirm('Testni o\'chirish', 'Bu testni o\'chirsangiz, barcha natijalar ham o\'chib ketadi. Davom etasizmi?', async () => {
+    await deleteTestFromDB(id);
+    await deleteResultsByTestId(id);
     toast('Test o\'chirildi', 'error');
     adminPage('tests');
   });
 }
 
-// ═══════════════════════════════════════════
-//  STUDENT PAGES
-// ═══════════════════════════════════════════
-function studentPage(page) {
+// STUDENT PAGES
+async function studentPage(page) {
   document.querySelectorAll('#studentScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#studentScreen .nav-item');
   if (page === 'tests') btns[0]?.classList.add('active');
   else btns[1]?.classList.add('active');
 
   const c = document.getElementById('studentContent');
-  if (page === 'tests') c.innerHTML = studentTestsHTML();
-  else c.innerHTML = studentResultsHTML();
+  c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
+  if (page === 'tests') c.innerHTML = await studentTestsHTML();
+  else c.innerHTML = await studentResultsHTML();
 }
 
-function studentTestsHTML() {
-  const tests = getTests().filter(t => t.status === 'active');
-  const results = getResults();
+async function studentTestsHTML() {
+  const [tests, resultsRaw, retakesRaw] = await Promise.all([getTests(), getResults(), getRetakes()]);
+  const activetests = tests.filter(t => t.status === 'active');
+  const results = resultsRaw.map(normResult);
+  const retakes = retakesRaw.map(normRetake);
 
-  if (tests.length === 0) return `
+  if (activetests.length === 0) return `
     <div class="page-head"><h1>Testlar</h1><p>Faol testlar</p></div>
     <div class="empty"><div class="empty-icon">📭</div><p>Hozircha faol testlar yo'q. Admin tez orada qo'shadi!</p></div>`;
 
-  const tiles = tests.map(t => {
+  const tiles = activetests.map(t => {
     const done = results.find(r => r.studentName === currentFullName && r.testId === t.id);
-    const retakeApproved = getRetakes().find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'approved');
-    const pendingRetake = getRetakes().find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'pending');
+    const retakeApproved = retakes.find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'approved');
+    const pendingRetake = retakes.find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'pending');
 
     if (done && !retakeApproved) {
       return `<div class="test-tile done">
@@ -1140,8 +1183,9 @@ function studentTestsHTML() {
     <div class="test-grid">${tiles}</div>`;
 }
 
-function studentResultsHTML() {
-  const myResults = getResults().filter(r => r.studentName === currentFullName).slice().reverse();
+async function studentResultsHTML() {
+  const resultsRaw = await getResults();
+  const myResults = resultsRaw.map(normResult).filter(r => r.studentName === currentFullName).reverse();
   const rows = myResults.map((r,i) => `
     <tr>
       <td>${i+1}</td>
@@ -1165,28 +1209,19 @@ function studentResultsHTML() {
     </div>`;
 }
 
-function requestRetake(testId, testName) {
-  const existing = getRetakes().find(r => r.studentName === currentFullName && r.testId === testId && r.status === 'pending');
+async function requestRetake(testId, testName) {
+  const retakesRaw = await getRetakes();
+  const retakes = retakesRaw.map(normRetake);
+  const existing = retakes.find(r => r.studentName === currentFullName && r.testId === testId && r.status === 'pending');
   if (existing) { toast('So\'rov allaqachon yuborilgan!'); return; }
-
-  const retakes = getRetakes();
-  retakes.push({
-    id: 'rt_' + Date.now(),
-    studentName: currentFullName,
-    testId, testName,
-    status: 'pending',
-    requestedAt: new Date().toLocaleString('uz-UZ')
-  });
-  setRetakes(retakes);
+  await saveRetake({ studentName: currentFullName, login: currentLogin, testId, testName });
   toast('📨 Qayta urinish so\'rovi adminga yuborildi', 'success');
   studentPage('tests');
 }
 
-// ═══════════════════════════════════════════
-//  QUIZ
-// ═══════════════════════════════════════════
-function startTest(id) {
-  const tests = getTests();
+// QUIZ
+async function startTest(id) {
+  const tests = await getTests();
   activeTest = tests.find(t => t.id === id);
   if (!activeTest) return;
   qIndex = 0;
@@ -1253,7 +1288,7 @@ function startQTimer() {
   }, 1000);
 }
 
-function finishTest() {
+async function finishTest() {
   clearInterval(qTimer);
   const test = activeTest;
   let correct = 0;
@@ -1262,31 +1297,25 @@ function finishTest() {
   const percent = Math.round(correct / total * 100);
   const totalSeconds = test.duration * 60 - qTimeLeft;
   const durStr = `${Math.floor(totalSeconds/60)}:${String(totalSeconds%60).padStart(2,'0')}`;
-  const now = new Date();
-  const finishedAt = now.toLocaleString('uz-UZ');
 
-  // Save result
-  const results = getResults();
-  results.push({
+  await saveResult({
     studentName: currentFullName,
     login: currentLogin,
     testId: test.id,
     testName: test.name,
     correct, total, percent,
     duration: durStr,
-    finishedAt,
     answers: { ...qAnswers }
   });
-  setResults(results);
 
-  // Remove approved retake if existed
-  const retakes = getRetakes().map(r => {
-    if (r.studentName === currentFullName && r.testId === test.id && r.status === 'approved') r.status = 'used';
-    return r;
-  });
-  setRetakes(retakes);
+  // Mark approved retake as used
+  const retakesRaw = await getRetakes();
+  for (const r of retakesRaw) {
+    if (r.student_name === currentFullName && r.test_id === test.id && r.status === 'approved') {
+      await updateRetakeStatus(r.id, 'used');
+    }
+  }
 
-  // Show result screen
   showScreen('resultScreen');
   document.getElementById('resScore').innerHTML = `${correct}<sub>/${total}</sub>`;
   document.getElementById('resC').textContent = correct;
@@ -1301,7 +1330,6 @@ function finishTest() {
   document.getElementById('resEmoji').textContent = emoji;
   document.getElementById('resLabel').textContent = label;
 
-  // AI Analysis
   runAIAnalysis(test, qAnswers, correct, total, percent);
 }
 
@@ -1383,27 +1411,7 @@ function toast(msg, type='') {
   toastTO = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
-// Demo data if empty
-if (getTests().length === 0) {
-  setTests([
-    {
-      id: 'demo1',
-      name: 'Namuna test',
-      description: 'Bu demo test. Admin paneldan o\'chirib yangi testlar qo\'shing.',
-      duration: 5,
-      status: 'active',
-      questions: [
-        { text: 'O\'zbekiston poytaxti qaysi shahar?', options: ['Toshkent','Samarqand','Buxoro','Namangan'], correct: 0 },
-        { text: 'O\'zbekiston mustaqillikni qachon qo\'lga kiritdi?', options: ['1991','1990','1992','1989'], correct: 0 },
-        { text: '2 × 3 + 4 = ?', options: ['10','14','8','12'], correct: 0 },
-      ],
-      createdAt: new Date().toISOString()
-    }
-  ]);
-}
+// INIT: Data is managed via Supabase
 </script>
 </body>
 </html>
