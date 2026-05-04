@@ -268,28 +268,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* RETAKE REQUEST */
 .retake-req{background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-
-/* CLOSED TEST (yopiq test) */
-.closed-answer-wrap{margin-bottom:16px}
-.closed-answer-input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:15px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;outline:none;transition:.2s;margin-top:8px}
-.closed-answer-input:focus{border-color:var(--accent);background:rgba(108,99,255,.07)}
-.closed-answer-input:disabled{opacity:.6;cursor:default}
-.closed-answer-input.correct-ans{border-color:var(--green);background:rgba(6,214,160,.08);color:var(--green)}
-.closed-answer-input.wrong-ans{border-color:var(--red);background:rgba(239,71,111,.08);color:var(--red)}
-.q-type-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.2);color:var(--gold);border-radius:6px;padding:2px 9px;font-size:10px;font-weight:700;margin-left:8px;text-transform:uppercase}
-.q-type-badge.open{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.2);color:#a99fff}
-
-/* Admin closed answers check */
-.check-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px}
-.check-row .student-ans{flex:1;font-size:13px;color:var(--text)}
-.check-row .correct-key{font-size:12px;color:var(--muted);min-width:120px}
-.check-btn-grp{display:flex;gap:6px}
-.modal-wide{width:700px;max-width:96vw}
-
-/* Test type selector */
-.type-toggle{display:flex;gap:8px;margin-bottom:16px}
-.type-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--muted);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;text-align:center}
-.type-btn.active{border-color:var(--accent);background:rgba(108,99,255,.12);color:var(--accent)}
 .retake-info{font-size:13px}
 .retake-info strong{color:var(--gold);display:block;margin-bottom:2px}
 .retake-info span{color:var(--muted);font-size:12px}
@@ -483,7 +461,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="nav-item" onclick="adminPage('tests')"><span class="ni">📝</span> Testlar</button>
       <button class="nav-item" onclick="adminPage('students')"><span class="ni">👥</span> O'quvchilar</button>
       <button class="nav-item" onclick="adminPage('results')"><span class="ni">🏆</span> Natijalar</button>
-      <button class="nav-item" onclick="adminPage('closed-review')"><span class="ni">✍️</span> Yopiq javoblar <span class="nav-badge" id="closedBadge" style="display:none">0</span></button>
       <button class="nav-item" id="retakeNavBtn" onclick="adminPage('retake')"><span class="ni">🔄</span> Qayta urinish <span class="nav-badge" id="retakeBadge" style="display:none">0</span></button>
     </div>
     <div class="content" id="adminContent"></div>
@@ -682,9 +659,7 @@ async function deleteTestFromDB(id) {
 async function saveResult(r) {
   return await sbFetch('results', { method: 'POST', body: JSON.stringify({
     student_name: r.studentName, login: r.login, test_id: r.testId, test_name: r.testName,
-    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration,
-    answers: r.answers, has_closed: r.hasClosed || false,
-    closed_total: r.closedTotal || 0, open_total: r.openTotal || r.total
+    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration, answers: r.answers
   })});
 }
 async function deleteResultsForStudent(studentName, testId) {
@@ -835,12 +810,11 @@ function logout() {
 async function adminPage(page) {
   document.querySelectorAll('#adminScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#adminScreen .nav-item');
-  const pages = ['dashboard','tests','students','results','closed-review','retake'];
+  const pages = ['dashboard','tests','students','results','retake'];
   const idx = pages.indexOf(page);
   if (btns[idx]) btns[idx].classList.add('active');
 
   await updateRetakeBadge();
-  await updateClosedBadge();
 
   const c = document.getElementById('adminContent');
   c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
@@ -848,7 +822,6 @@ async function adminPage(page) {
   else if (page === 'tests') c.innerHTML = await adminTestsHTML();
   else if (page === 'students') c.innerHTML = await adminStudentsHTML();
   else if (page === 'results') c.innerHTML = await adminResultsHTML();
-  else if (page === 'closed-review') c.innerHTML = await adminClosedReviewHTML();
   else if (page === 'retake') c.innerHTML = await adminRetakeHTML();
 }
 
@@ -858,19 +831,6 @@ async function updateRetakeBadge() {
   const badge = document.getElementById('retakeBadge');
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
   else { badge.style.display = 'none'; }
-}
-
-async function updateClosedBadge() {
-  const raw = await getResults();
-  const pending = raw.filter(r => {
-    const ans = r.answers || {};
-    return Object.entries(ans).some(([k,v]) => typeof v === 'object' && v !== null && v.type === 'closed' && v.score === null);
-  }).length;
-  const badge = document.getElementById('closedBadge');
-  if (badge) {
-    if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
-    else { badge.style.display = 'none'; }
-  }
 }
 
 // DASHBOARD
@@ -1042,106 +1002,6 @@ async function adminRetakeHTML() {
     </div>` : ''}`;
 }
 
-// CLOSED TEST REVIEW — Admin tekshiruvi
-async function adminClosedReviewHTML() {
-  const [resultsRaw, testsRaw] = await Promise.all([getResults(), getTests()]);
-  const tests = testsRaw;
-
-  // Find results that have closed answers
-  const withClosed = resultsRaw.filter(r => {
-    const ans = r.answers || {};
-    return Object.values(ans).some(v => typeof v === 'object' && v !== null && v.type === 'closed');
-  });
-
-  if (withClosed.length === 0) {
-    return `
-      <div class="page-head"><h1>Yopiq javoblar tekshiruvi</h1><p>O'quvchilarning yopiq savollarga javoblari</p></div>
-      <div class="empty"><div class="empty-icon">✅</div><p>Tekshiriladigan yopiq javoblar yo'q</p></div>`;
-  }
-
-  // Group by result id
-  const cards = withClosed.map(r => {
-    const test = tests.find(t => t.id === r.test_id);
-    if (!test) return '';
-    const ans = r.answers || {};
-    const closedEntries = Object.entries(ans).filter(([k,v]) => typeof v === 'object' && v !== null && v.type === 'closed');
-    const pending = closedEntries.filter(([k,v]) => v.score === null);
-    const done = closedEntries.filter(([k,v]) => v.score !== null);
-
-    const rows = closedEntries.map(([idx, v]) => {
-      const q = test.questions[parseInt(idx)];
-      const qText = q ? q.text : `Savol ${parseInt(idx)+1}`;
-      const correctKey = q ? q.correctText : '—';
-      const isPending = v.score === null;
-      return `
-        <div class="check-row" style="${isPending ? '' : 'opacity:.7'}">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:11px;color:var(--muted);margin-bottom:3px">${qText}</div>
-            <div class="student-ans">"${v.text}"</div>
-            <div class="correct-key" style="margin-top:3px;color:var(--gold)">✓ Kalit: ${correctKey}</div>
-          </div>
-          ${isPending
-            ? `<div class="check-btn-grp">
-                <button class="btn btn-green btn-sm" onclick="gradeAnswer('${r.id}','${idx}',1)">✓ To'g'ri</button>
-                <button class="btn btn-red btn-sm" onclick="gradeAnswer('${r.id}','${idx}',0)">✕ Xato</button>
-               </div>`
-            : `<span class="badge ${v.score===1?'badge-green':'badge-red'}">${v.score===1?'✓ To\'g\'ri':'✕ Xato'}</span>`
-          }
-        </div>`;
-    }).join('');
-
-    return `
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-title" style="justify-content:space-between">
-          <span>👤 ${r.student_name} · <span style="color:var(--muted)">${r.test_name}</span></span>
-          <span class="badge ${pending.length>0?'badge-yellow':'badge-green'}">${pending.length>0?`${pending.length} ta kutmoqda`:'Barcha tekshirildi'}</span>
-        </div>
-        ${rows}
-      </div>`;
-  }).join('');
-
-  return `
-    <div class="page-head"><h1>Yopiq javoblar tekshiruvi</h1><p>O'quvchilarning yopiq savollarga javoblari</p></div>
-    ${cards}`;
-}
-
-async function gradeAnswer(resultId, qIdx, score) {
-  // Fetch the result
-  const raw = await sbFetch('results?id=eq.' + encodeURIComponent(resultId));
-  if (!raw || !raw.length) { toast('Natija topilmadi', 'error'); return; }
-  const r = raw[0];
-  const answers = r.answers || {};
-
-  // Update this specific answer score
-  if (answers[qIdx] && typeof answers[qIdx] === 'object') {
-    answers[qIdx].score = score;
-  }
-
-  // Recalculate correct count (open correct + closed correct)
-  const tests = await getTests();
-  const test = tests.find(t => t.id === r.test_id);
-  let newCorrect = 0;
-  if (test) {
-    test.questions.forEach((q, i) => {
-      const a = answers[i];
-      if (q.type === 'closed') {
-        if (a && typeof a === 'object' && a.score === 1) newCorrect++;
-      } else {
-        if (a === q.correct) newCorrect++;
-      }
-    });
-  }
-  const newPercent = Math.round(newCorrect / r.total * 100);
-
-  await sbFetch('results?id=eq.' + encodeURIComponent(resultId), {
-    method: 'PATCH',
-    body: JSON.stringify({ answers, correct: newCorrect, percent: newPercent })
-  });
-
-  toast(score === 1 ? '✓ To\'g\'ri deb belgilandi' : '✕ Xato deb belgilandi', score === 1 ? 'success' : 'error');
-  adminPage('closed-review');
-}
-
 async function approveRetake(id) {
   const retakesRaw = await getRetakes();
   const r = retakesRaw.find(x => x.id === id);
@@ -1192,80 +1052,26 @@ function addQuestion(data) {
   questionCount++;
   const n = questionCount;
   const letters = ['A','B','C','D'];
-  const isOpen = data && data.type === 'closed'; // 'closed' means text answer (yopiq)
-  const qtype = data ? (data.type || 'open') : 'open'; // 'open'=ABCD, 'closed'=text
-
-  const optsHTML_abcd = [0,1,2,3].map(i => `
+  const optsHTML = [0,1,2,3].map(i => `
     <div class="opt-inp-wrap">
       <input type="radio" class="opt-radio" name="correct_${n}" value="${i}" id="r${n}_${i}" ${data && data.correct === i ? 'checked' : ''}>
-      <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}" value="${data && data.options ? data.options[i]||'' : ''}">
+      <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}" value="${data ? data.options[i]||'' : ''}">
     </div>
   `).join('');
-
-  const optsHTML_closed = `
-    <div class="f-group" style="margin-top:8px">
-      <label class="f-label">To'g'ri javob (matn)</label>
-      <input class="f-input" id="closed_ans_${n}" placeholder="To'g'ri javobni kiriting..." value="${data && data.correctText ? data.correctText : ''}">
-    </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px">O'quvchi matn yozadi, admin tekshiradi</div>`;
 
   const div = document.createElement('div');
   div.className = 'q-block';
   div.id = `qblock_${n}`;
-  div.dataset.qtype = qtype;
-
   div.innerHTML = `
-    <div class="q-block-num">Savol ${n} <span class="q-type-badge ${qtype === 'open' ? 'open' : ''}" id="qtypelabel_${n}">${qtype === 'open' ? 'Ochiq (A/B/C/D)' : 'Yopiq (Matn)'}</span></div>
+    <div class="q-block-num">Savol ${n}</div>
     <button class="remove-q" onclick="removeQuestion(${n})">✕ O'chirish</button>
-    <div class="type-toggle" style="margin-bottom:10px">
-      <button class="type-btn ${qtype === 'open' ? 'active' : ''}" onclick="setQType(${n},'open')">📋 Ochiq (A/B/C/D)</button>
-      <button class="type-btn ${qtype === 'closed' ? 'active' : ''}" onclick="setQType(${n},'closed')">✍️ Yopiq (Matn)</button>
-    </div>
     <div class="f-group" style="margin-bottom:10px">
       <input class="f-input" id="qt${n}" placeholder="Savol matni..." value="${data ? data.text : ''}">
     </div>
-    <div id="qopts_${n}">
-      ${qtype === 'open' ? `<div class="opts-row">${optsHTML_abcd}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>` : optsHTML_closed}
-    </div>
+    <div class="opts-row">${optsHTML}</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>
   `;
   document.getElementById('questionsBuilder').appendChild(div);
-}
-
-function setQType(n, type) {
-  const block = document.getElementById(`qblock_${n}`);
-  if (!block) return;
-  block.dataset.qtype = type;
-  const letters = ['A','B','C','D'];
-
-  // Update type buttons
-  block.querySelectorAll('.type-btn').forEach((b,i) => {
-    b.classList.toggle('active', (i===0 && type==='open') || (i===1 && type==='closed'));
-  });
-
-  // Update label badge
-  const lbl = document.getElementById(`qtypelabel_${n}`);
-  if (lbl) {
-    lbl.textContent = type === 'open' ? 'Ochiq (A/B/C/D)' : 'Yopiq (Matn)';
-    lbl.className = `q-type-badge ${type === 'open' ? 'open' : ''}`;
-  }
-
-  const optsDiv = document.getElementById(`qopts_${n}`);
-  if (type === 'open') {
-    const optsHTML_abcd = [0,1,2,3].map(i => `
-      <div class="opt-inp-wrap">
-        <input type="radio" class="opt-radio" name="correct_${n}" value="${i}" id="r${n}_${i}">
-        <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}">
-      </div>
-    `).join('');
-    optsDiv.innerHTML = `<div class="opts-row">${optsHTML_abcd}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>`;
-  } else {
-    optsDiv.innerHTML = `
-      <div class="f-group" style="margin-top:8px">
-        <label class="f-label">To'g'ri javob (matn)</label>
-        <input class="f-input" id="closed_ans_${n}" placeholder="To'g'ri javobni kiriting...">
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">O'quvchi matn yozadi, admin tekshiradi</div>`;
-  }
 }
 
 function removeQuestion(n) {
@@ -1287,22 +1093,14 @@ async function saveTest() {
 
   qBlocks.forEach(block => {
     const n = block.id.replace('qblock_','');
-    const qtype = block.dataset.qtype || 'open';
     const text = document.getElementById(`qt${n}`)?.value.trim();
     if (!text) { valid = false; return; }
-
-    if (qtype === 'closed') {
-      const correctText = document.getElementById(`closed_ans_${n}`)?.value.trim();
-      if (!correctText) { valid = false; return; }
-      questions.push({ text, type: 'closed', correctText, options: [], correct: -1 });
-    } else {
-      const options = [0,1,2,3].map(i => document.getElementById(`opt${n}_${i}`)?.value.trim() || '');
-      const radios = block.querySelectorAll(`input[name="correct_${n}"]`);
-      let correct = -1;
-      radios.forEach(r => { if(r.checked) correct = parseInt(r.value); });
-      if (correct === -1) { valid = false; return; }
-      questions.push({ text, type: 'open', options, correct });
-    }
+    const options = [0,1,2,3].map(i => document.getElementById(`opt${n}_${i}`)?.value.trim() || '');
+    const radios = block.querySelectorAll(`input[name="correct_${n}"]`);
+    let correct = -1;
+    radios.forEach(r => { if(r.checked) correct = parseInt(r.value); });
+    if (correct === -1) { valid = false; return; }
+    questions.push({ text, options, correct });
   });
 
   if (!valid || questions.length === 0) { toast('Barcha savollarni to\'liq to\'ldiring!', 'error'); return; }
@@ -1313,6 +1111,7 @@ async function saveTest() {
   toast(editingTestId ? '✓ Test yangilandi' : '✓ Test yaratildi', 'success');
   adminPage('tests');
 }
+
 async function deleteTest(id) {
   openConfirm('Testni o\'chirish', 'Bu testni o\'chirsangiz, barcha natijalar ham o\'chib ketadi. Davom etasizmi?', async () => {
     await deleteTestFromDB(id);
@@ -1440,7 +1239,6 @@ function renderQuestion() {
   const total = activeTest.questions.length;
   const answered = qAnswers[qIndex] !== undefined;
   const letters = ['A','B','C','D'];
-  const isClosed = q.type === 'closed';
 
   document.getElementById('qNum').textContent = `Savol ${qIndex+1} / ${total}`;
   document.getElementById('qText').textContent = q.text;
@@ -1449,39 +1247,17 @@ function renderQuestion() {
   document.getElementById('qStatus').textContent = answered ? '✓ Javob berildi' : '';
   document.getElementById('qNext').textContent = qIndex === total-1 ? '✅ Yakunlash' : 'Keyingisi →';
 
-  if (isClosed) {
-    const savedAns = qAnswers[qIndex];
-    const val = (savedAns && typeof savedAns === 'object') ? savedAns.text : (savedAns || '');
-    const isAnswered = val !== '' && val !== undefined;
-    document.getElementById('qOpts').innerHTML = `
-      <div class="closed-answer-wrap">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">✍️ <span class="q-type-badge">Yopiq savol</span> — matn yozing:</div>
-        <textarea class="closed-answer-input" id="closedInput" rows="3" placeholder="Javobingizni yozing..." ${isAnswered ? 'disabled' : ''}>${val}</textarea>
-        ${!isAnswered ? `<button class="btn btn-accent" style="margin-top:10px;width:100%;justify-content:center" onclick="submitClosedAnswer()">✔ Javobni tasdiqlash</button>` : ''}
-        ${isAnswered ? `<div style="margin-top:8px;color:var(--muted);font-size:12px">⏳ Javobingiz admin tomonidan tekshiriladi</div>` : ''}
-      </div>`;
-  } else {
-    const chosen = qAnswers[qIndex];
-    document.getElementById('qOpts').innerHTML = q.options.map((opt, i) => {
-      let cls = '';
-      if (answered) {
-        if (i === q.correct) cls = 'correct';
-        else if (i === chosen && i !== q.correct) cls = 'wrong';
-      } else if (i === chosen) cls = 'sel';
-      return `<button class="opt ${cls}" onclick="selectOpt(${i})" ${answered?'disabled':''}>
-        <div class="opt-letter">${letters[i]}</div>${opt}
-      </button>`;
-    }).join('');
-  }
-}
-
-function submitClosedAnswer() {
-  const input = document.getElementById('closedInput');
-  if (!input) return;
-  const val = input.value.trim();
-  if (!val) { toast('Javob yozing!', 'error'); return; }
-  qAnswers[qIndex] = { type: 'closed', text: val, score: null }; // score=null means unchecked
-  renderQuestion();
+  const chosen = qAnswers[qIndex];
+  document.getElementById('qOpts').innerHTML = q.options.map((opt, i) => {
+    let cls = '';
+    if (answered) {
+      if (i === q.correct) cls = 'correct';
+      else if (i === chosen && i !== q.correct) cls = 'wrong';
+    } else if (i === chosen) cls = 'sel';
+    return `<button class="opt ${cls}" onclick="selectOpt(${i})" ${answered?'disabled':''}>
+      <div class="opt-letter">${letters[i]}</div>${opt}
+    </button>`;
+  }).join('');
 }
 
 function selectOpt(i) {
@@ -1516,22 +1292,9 @@ async function finishTest() {
   clearInterval(qTimer);
   const test = activeTest;
   let correct = 0;
-  let openTotal = 0;
-  let closedTotal = 0;
-
-  test.questions.forEach((q, i) => {
-    if (q.type === 'closed') {
-      closedTotal++;
-      // closed questions scored by admin later (score=null initially)
-    } else {
-      openTotal++;
-      if (qAnswers[i] === q.correct) correct++;
-    }
-  });
-
+  test.questions.forEach((q, i) => { if (qAnswers[i] === q.correct) correct++; });
   const total = test.questions.length;
-  // For display: only count open questions in score, closed added later
-  const openPercent = openTotal > 0 ? Math.round(correct / openTotal * 100) : 100;
+  const percent = Math.round(correct / total * 100);
   const totalSeconds = test.duration * 60 - qTimeLeft;
   const durStr = `${Math.floor(totalSeconds/60)}:${String(totalSeconds%60).padStart(2,'0')}`;
 
@@ -1540,12 +1303,9 @@ async function finishTest() {
     login: currentLogin,
     testId: test.id,
     testName: test.name,
-    correct, total, percent: openPercent,
+    correct, total, percent,
     duration: durStr,
-    answers: { ...qAnswers },
-    hasClosed: closedTotal > 0,
-    closedTotal,
-    openTotal
+    answers: { ...qAnswers }
   });
 
   // Mark approved retake as used
@@ -1557,20 +1317,20 @@ async function finishTest() {
   }
 
   showScreen('resultScreen');
-  document.getElementById('resScore').innerHTML = `${correct}<sub>/${openTotal || total}</sub>`;
+  document.getElementById('resScore').innerHTML = `${correct}<sub>/${total}</sub>`;
   document.getElementById('resC').textContent = correct;
-  document.getElementById('resW').textContent = openTotal - correct;
-  document.getElementById('resPct').textContent = openPercent + '%';
+  document.getElementById('resW').textContent = total - correct;
+  document.getElementById('resPct').textContent = percent + '%';
 
   let emoji, label;
-  if (openPercent >= 86) { emoji='🏆'; label='A\'lo natija! Zo\'r!'; }
-  else if (openPercent >= 71) { emoji='🎉'; label='Yaxshi natija!'; }
-  else if (openPercent >= 55) { emoji='👍'; label='Qoniqarli'; }
+  if (percent >= 86) { emoji='🏆'; label='A\'lo natija! Zo\'r!'; }
+  else if (percent >= 71) { emoji='🎉'; label='Yaxshi natija!'; }
+  else if (percent >= 55) { emoji='👍'; label='Qoniqarli'; }
   else { emoji='📚'; label='Ko\'proq mashq kerak'; }
   document.getElementById('resEmoji').textContent = emoji;
-  document.getElementById('resLabel').textContent = label + (closedTotal > 0 ? ` · ${closedTotal} ta yopiq javob admin tekshiradi` : '');
+  document.getElementById('resLabel').textContent = label;
 
-  runAIAnalysis(test, qAnswers, correct, openTotal || total, openPercent);
+  runAIAnalysis(test, qAnswers, correct, total, percent);
 }
 
 async function runAIAnalysis(test, answers, correct, total, percent) {
