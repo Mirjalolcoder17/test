@@ -329,6 +329,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .login-card{padding:20px 16px}
 }
 </style>
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1618,5 +1619,69 @@ function esc(str) {
     .replace(/'/g,'&#39;');
 }
 </script>
+<script>
+  // 1. Supabase loyihangizdan olgan ma'lumotlarni shu yerga qo'ying:
+  const SUPABASE_URL = "https://ostmvrztldvrkrbepufa.supabase.co"; // O'zingizniki bilan almashtiring
+  const SUPABASE_ANON_KEY = "sb_publishable_WjEzCyna-xlGTkTunWzsSg_6h_Vujoz"; // O'zingizniki bilan almashtiring
+
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // 2. Global o'zgaruvchi
+  let currentUser = null;
+
+  // 3. Login qilish funksiyasi
+  async function doLogin() {
+    const loginInput = document.getElementById('li').value.trim();
+    const errBox = document.getElementById('loginErr');
+    
+    if (!loginInput) {
+      errBox.textContent = "Loginni kiriting";
+      errBox.style.display = 'block';
+      return;
+    }
+
+    // Supabase'dan foydalanuvchini qidiramiz
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('login', loginInput)
+      .single();
+
+    if (error || !user) {
+      // Yangi o'quvchi yaratish
+      const { data: newUser, error: createErr } = await supabase
+        .from('users')
+        .insert([{ login: loginInput, role: 'student' }])
+        .select()
+        .single();
+
+      if (createErr) {
+        errBox.textContent = "Xatolik yuz berdi";
+        errBox.style.display = 'block';
+        return;
+      }
+      currentUser = newUser;
+      showScreen('nameScreen');
+    } else {
+      currentUser = user;
+      if (user.role === 'admin') {
+        showScreen('adminScreen');
+      } else if (!user.first_name) {
+        showScreen('nameScreen');
+      } else {
+        showScreen('studentScreen');
+      }
+    }
+  }
+
+  // Sahifani almashtirish funksiyasi (Sizning mavjud funksiyangizga moslashtirilgan)
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
 </body>
 </html>
