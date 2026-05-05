@@ -26,19 +26,15 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:14px}
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 
-/* ── SCREENS ── */
 .screen{display:none;min-height:100vh;flex-direction:column}
 .screen.active{display:flex}
-#resultScreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+#resultScreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--bg);overflow-y:auto;padding:20px}
 
-/* ════════════════════════════════
-   LOGIN
-════════════════════════════════ */
+/* LOGIN */
 #loginScreen{background:var(--bg);align-items:center;justify-content:center;position:relative;overflow:hidden}
 #loginScreen::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 65%);top:-200px;right:-150px;pointer-events:none}
 #loginScreen::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(255,101,132,.08) 0%,transparent 65%);bottom:-100px;left:-100px;pointer-events:none}
@@ -63,16 +59,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-si
 
 .err-box{background:rgba(239,71,111,.12);border:1px solid rgba(239,71,111,.25);color:#ff8fab;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:14px;display:none}
 
-/* ════════════════════════════════
-   NAME SCREEN
-════════════════════════════════ */
+/* NAME SCREEN */
 #nameScreen{background:var(--bg);align-items:center;justify-content:center}
 .name-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:40px;width:440px;animation:fadeUp .5s cubic-bezier(.16,1,.3,1)}
 .step-label{display:inline-flex;align-items:center;gap:6px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.2);color:var(--green);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;margin-bottom:22px}
 
-/* ════════════════════════════════
-   TOPBAR
-════════════════════════════════ */
+/* TOPBAR */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
 .tb-brand{font-family:var(--font-head);font-size:20px;font-weight:700;letter-spacing:-.5px}
 .tb-brand em{color:var(--accent);font-style:normal}
@@ -82,12 +74,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-si
 .btn-out{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;transition:.2s;font-family:var(--font-body)}
 .btn-out:hover{border-color:var(--accent2);color:var(--accent2)}
 
-/* ════════════════════════════════
-   LAYOUT
-════════════════════════════════ */
+/* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden}
 
-/* SIDEBAR */
 .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
 .nav-section{padding:20px 12px 8px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin:2px 8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:.15s;border:none;background:transparent;width:calc(100% - 16px);text-align:left;font-family:var(--font-body)}
@@ -96,12 +85,9 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);font-si
 .nav-item .ni{font-size:16px;width:20px;text-align:center}
 .nav-badge{margin-left:auto;background:var(--accent2);color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700}
 
-/* CONTENT */
 .content{flex:1;overflow-y:auto;padding:32px}
 
-/* ════════════════════════════════
-   CARDS & COMPONENTS
-════════════════════════════════ */
+/* CARDS */
 .page-head{margin-bottom:28px}
 .page-head h1{font-family:var(--font-head);font-size:24px;font-weight:700;letter-spacing:-.5px;margin-bottom:3px}
 .page-head p{color:var(--muted);font-size:13px}
@@ -162,9 +148,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .tab{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:var(--font-body);transition:.15s}
 .tab.active{background:var(--surface2);color:var(--text);font-weight:600}
 
-/* ════════════════════════════════
-   STUDENT TEST CARDS
-════════════════════════════════ */
+/* STUDENT TEST CARDS */
 .test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 .test-tile{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
 .test-tile:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(108,99,255,.15)}
@@ -177,9 +161,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .test-meta span{font-size:11px;color:var(--muted);background:rgba(255,255,255,.05);border-radius:6px;padding:3px 8px}
 .done-overlay{position:absolute;top:12px;right:12px}
 
-/* ════════════════════════════════
-   QUIZ SCREEN
-════════════════════════════════ */
+/* QUIZ SCREEN */
 #quizScreen{background:var(--bg)}
 .quiz-top{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .quiz-name{font-family:var(--font-head);font-size:17px;font-weight:700}
@@ -195,7 +177,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .q-num{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
 .q-text{font-family:var(--font-head);font-size:21px;font-weight:600;line-height:1.4;margin-bottom:28px}
 .opts{display:flex;flex-direction:column;gap:10px}
-.opt{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:15px 18px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:14px;font-size:14px;text-align:left;color:var(--text);font-family:var(--font-body)}
+.opt{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:15px 18px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:14px;font-size:14px;text-align:left;color:var(--text);font-family:var(--font-body);width:100%}
 .opt:hover:not(:disabled){border-color:var(--accent);background:rgba(108,99,255,.07)}
 .opt.sel{border-color:var(--accent);background:rgba(108,99,255,.1);color:#c5bfff}
 .opt.correct{border-color:var(--green);background:rgba(6,214,160,.08);color:var(--green)}
@@ -208,9 +190,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 .quiz-foot{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
 
-/* ════════════════════════════════
-   RESULT SCREEN
-════════════════════════════════ */
+/* RESULT SCREEN */
 .result-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:48px;text-align:center;width:480px;animation:fadeUp .5s cubic-bezier(.16,1,.3,1)}
 .result-emoji{font-size:52px;margin-bottom:16px}
 .result-score{font-family:var(--font-head);font-size:72px;font-weight:700;line-height:1;letter-spacing:-2px}
@@ -221,16 +201,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .rs-val{font-family:var(--font-head);font-size:24px;font-weight:700;margin-bottom:2px}
 .rs-lbl{font-size:11px;color:var(--muted)}
 
-/* ════════════════════════════════
-   AI ASSISTANT
-════════════════════════════════ */
+/* AI ASSISTANT */
 .ai-panel{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:0;overflow:hidden;margin-top:20px}
 .ai-header{background:linear-gradient(135deg,rgba(108,99,255,.2),rgba(255,101,132,.1));border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:10px}
 .ai-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .ai-title{font-family:var(--font-head);font-size:14px;font-weight:600}
 .ai-sub{font-size:11px;color:var(--muted)}
 .ai-body{padding:20px;max-height:360px;overflow-y:auto}
-.ai-msg{font-size:13px;line-height:1.7;color:rgba(240,238,255,.85);white-space:pre-wrap}
+.ai-msg{font-size:13px;line-height:1.7;color:rgba(240,238,255,.85);white-space:pre-wrap;text-align:left}
 .ai-loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;padding:8px 0}
 .dots{display:flex;gap:4px}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:bounce .8s infinite}
@@ -238,9 +216,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .dot:nth-child(3){animation-delay:.3s}
 @keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:.5}40%{transform:scale(1);opacity:1}}
 
-/* ════════════════════════════════
-   MODAL
-════════════════════════════════ */
+/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;width:560px;max-height:85vh;overflow-y:auto;animation:fadeUp .3s cubic-bezier(.16,1,.3,1)}
@@ -268,88 +244,56 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* RETAKE REQUEST */
 .retake-req{background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.15);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+
+/* CLOSED TEST */
+.closed-answer-wrap{margin-bottom:16px}
+.closed-answer-input{width:100%;background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:15px 18px;color:var(--text);font-family:var(--font-body);font-size:15px;outline:none;transition:.2s;margin-top:8px}
+.closed-answer-input:focus{border-color:var(--accent);background:rgba(108,99,255,.07)}
+.closed-answer-input:disabled{opacity:.6;cursor:default}
+.q-type-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.2);color:var(--gold);border-radius:6px;padding:2px 9px;font-size:10px;font-weight:700;margin-left:8px;text-transform:uppercase}
+.q-type-badge.open{background:rgba(108,99,255,.12);border-color:rgba(108,99,255,.2);color:#a99fff}
+
+/* Admin closed answers check */
+.check-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px}
+.check-row .student-ans{flex:1;font-size:13px;color:var(--text)}
+.check-btn-grp{display:flex;gap:6px}
+
+/* Test type selector */
+.type-toggle{display:flex;gap:8px;margin-bottom:16px}
+.type-btn{flex:1;padding:10px;border:2px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--muted);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;text-align:center}
+.type-btn.active{border-color:var(--accent);background:rgba(108,99,255,.12);color:var(--accent)}
 .retake-info{font-size:13px}
 .retake-info strong{color:var(--gold);display:block;margin-bottom:2px}
 .retake-info span{color:var(--muted);font-size:12px}
 
-/* ── GEMINI KEY INPUT ── */
-.gemini-setup{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:12px;padding:16px;margin-bottom:20px;display:none}
-.gemini-setup.visible{display:block}
-
-/* ════════════════════════════════
-   MOBILE RESPONSIVE (≤768px)
-════════════════════════════════ */
+/* MOBILE */
 @media (max-width: 768px) {
   html,body{overflow:auto}
-
-  /* LOGIN */
   #loginScreen::before,#loginScreen::after{display:none}
   .login-wrap{width:100%;padding:24px 16px;animation:fadeUp .5s cubic-bezier(.16,1,.3,1)}
   .login-card{padding:24px 20px;border-radius:16px}
   .brand{font-size:28px}
-
-  /* NAME SCREEN */
   .name-card{width:100%;padding:28px 20px;margin:16px;border-radius:16px}
-
-  /* TOPBAR */
   .topbar{padding:0 14px;height:52px}
   .tb-brand{font-size:17px}
   .chip{padding:4px 10px;font-size:11px}
   .btn-out{padding:5px 10px;font-size:11px}
   .tb-right{gap:8px}
-
-  /* LAYOUT — sidebar becomes bottom tab bar */
   .layout{flex-direction:column}
-  .sidebar{
-    width:100%;
-    height:auto;
-    border-right:none;
-    border-top:1px solid var(--border);
-    flex-direction:row;
-    overflow-x:auto;
-    overflow-y:hidden;
-    order:2;
-    flex-shrink:0;
-    padding:6px 8px;
-    gap:4px;
-  }
+  .sidebar{width:100%;height:auto;border-right:none;border-top:1px solid var(--border);flex-direction:row;overflow-x:auto;overflow-y:hidden;order:2;flex-shrink:0;padding:6px 8px;gap:4px}
   .nav-section{display:none}
-  .nav-item{
-    flex-direction:column;
-    gap:2px;
-    padding:8px 10px;
-    font-size:10px;
-    width:auto;
-    min-width:60px;
-    flex:1;
-    margin:0;
-    border-radius:10px;
-    text-align:center;
-    white-space:nowrap;
-  }
+  .nav-item{flex-direction:column;gap:2px;padding:8px 10px;font-size:10px;width:auto;min-width:60px;flex:1;margin:0;border-radius:10px;text-align:center;white-space:nowrap}
   .nav-item .ni{font-size:20px;width:auto}
   .nav-badge{margin:0;font-size:9px;padding:1px 5px}
   .content{order:1;padding:16px;overflow-y:auto;flex:1}
-
-  /* GRIDS */
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr;gap:12px}
   .grid-3{grid-template-columns:1fr}
-
-  /* STAT CARDS */
   .stat-card{padding:16px}
   .stat-num{font-size:24px}
-
-  /* PAGE HEAD */
   .page-head{margin-bottom:16px}
   .page-head h1{font-size:19px}
-
-  /* CARDS */
   .card{padding:16px}
-
-  /* TEST GRID */
   .test-grid{grid-template-columns:1fr}
-
-  /* QUIZ SCREEN */
   .quiz-top{padding:12px 16px;flex-wrap:wrap;gap:8px}
   .quiz-name{font-size:14px;width:100%}
   .quiz-info{width:100%;justify-content:space-between}
@@ -359,8 +303,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .opt{padding:12px 14px;font-size:13px}
   .quiz-foot{flex-wrap:wrap;gap:10px}
   .quiz-foot .btn{flex:1;justify-content:center;min-width:0}
-
-  /* RESULT SCREEN */
   #resultScreen{padding:16px;align-items:stretch}
   .result-card{width:100%;padding:28px 20px;border-radius:16px}
   .result-score{font-size:56px}
@@ -368,30 +310,17 @@ tr:hover td{background:rgba(255,255,255,.02)}
   .result-stats{gap:10px}
   .rs{padding:12px 8px}
   .rs-val{font-size:20px}
-
-  /* MODAL */
   .modal-bg{align-items:flex-end}
   .modal{width:100%;border-radius:20px 20px 0 0;max-height:90vh;padding:24px 20px}
   .opts-row{grid-template-columns:1fr}
-
-  /* TABLE — scroll horizontally */
   .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   table{min-width:480px}
-
-  /* TABS */
   .tabs{width:100%;overflow-x:auto}
   .tab{white-space:nowrap;padding:7px 14px;font-size:12px}
-
-  /* AI PANEL */
   .ai-body{max-height:220px}
-
-  /* TOAST */
   .toast{bottom:80px;right:12px;left:12px;max-width:none}
-
-  /* BUTTONS */
   .btn{font-size:12px;padding:9px 14px}
 }
-
 @media (max-width: 400px) {
   .grid-2{grid-template-columns:1fr}
   .result-stats{grid-template-columns:repeat(3,1fr)}
@@ -403,7 +332,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </head>
 <body>
 
-<!-- ══════════ LOGIN ══════════ -->
+<!-- LOGIN -->
 <div id="loginScreen" class="screen active">
   <div class="login-wrap">
     <div class="brand">Test<em>Hub</em></div>
@@ -423,7 +352,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- ══════════ NAME ══════════ -->
+<!-- NAME -->
 <div id="nameScreen" class="screen">
   <div style="display:flex;align-items:center;justify-content:center;flex:1">
     <div class="name-card">
@@ -444,13 +373,12 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- ══════════ ADMIN ══════════ -->
+<!-- ADMIN -->
 <div id="adminScreen" class="screen">
   <div class="topbar">
     <div class="tb-brand">Test<em>Hub</em></div>
     <div class="tb-right">
       <span class="chip admin">⚡ Admin</span>
-      <span class="chip">EGA</span>
       <button class="btn-out" onclick="logout()">Chiqish</button>
     </div>
   </div>
@@ -461,13 +389,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="nav-item" onclick="adminPage('tests')"><span class="ni">📝</span> Testlar</button>
       <button class="nav-item" onclick="adminPage('students')"><span class="ni">👥</span> O'quvchilar</button>
       <button class="nav-item" onclick="adminPage('results')"><span class="ni">🏆</span> Natijalar</button>
-      <button class="nav-item" id="retakeNavBtn" onclick="adminPage('retake')"><span class="ni">🔄</span> Qayta urinish <span class="nav-badge" id="retakeBadge" style="display:none">0</span></button>
+      <button class="nav-item" onclick="adminPage('closed-review')"><span class="ni">✍️</span> Yopiq javoblar <span class="nav-badge" id="closedBadge" style="display:none">0</span></button>
+      <button class="nav-item" onclick="adminPage('retake')"><span class="ni">🔄</span> Qayta urinish <span class="nav-badge" id="retakeBadge" style="display:none">0</span></button>
     </div>
     <div class="content" id="adminContent"></div>
   </div>
 </div>
 
-<!-- ══════════ STUDENT ══════════ -->
+<!-- STUDENT -->
 <div id="studentScreen" class="screen">
   <div class="topbar">
     <div class="tb-brand">Test<em>Hub</em></div>
@@ -486,7 +415,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- ══════════ QUIZ ══════════ -->
+<!-- QUIZ -->
 <div id="quizScreen" class="screen">
   <div class="quiz-top">
     <div class="quiz-name" id="qName"></div>
@@ -508,7 +437,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- ══════════ RESULT ══════════ -->
+<!-- RESULT -->
 <div id="resultScreen">
   <div class="result-card">
     <div class="result-emoji" id="resEmoji"></div>
@@ -519,8 +448,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="rs"><div class="rs-val" id="resW" style="color:var(--red)"></div><div class="rs-lbl">Noto'g'ri</div></div>
       <div class="rs"><div class="rs-val" id="resPct"></div><div class="rs-lbl">Foiz</div></div>
     </div>
-
-    <!-- AI Panel -->
     <div class="ai-panel" id="aiPanel">
       <div class="ai-header">
         <div class="ai-avatar">🤖</div>
@@ -530,14 +457,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="ai-loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span>Tahlil qilinmoqda...</span></div>
       </div>
     </div>
-
     <div style="display:flex;gap:10px;justify-content:center;margin-top:20px">
       <button class="btn btn-accent" onclick="backToStudent()">← Testlarga qaytish</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ TEST MODAL ══════════ -->
+<!-- TEST MODAL -->
 <div class="modal-bg" id="testModal">
   <div class="modal">
     <div class="modal-title">
@@ -565,13 +491,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </select>
       </div>
     </div>
-
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div style="font-family:var(--font-head);font-size:14px;font-weight:600">Savollar</div>
       <button class="btn btn-ghost btn-sm" onclick="addQuestion()">+ Savol qo'shish</button>
     </div>
     <div id="questionsBuilder"></div>
-
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
       <button class="btn btn-ghost" onclick="closeModal()">Bekor qilish</button>
       <button class="btn btn-accent" onclick="saveTest()">💾 Saqlash</button>
@@ -579,7 +503,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
-<!-- ══════════ CONFIRM MODAL ══════════ -->
+<!-- CONFIRM MODAL -->
 <div class="modal-bg" id="confirmModal">
   <div class="modal" style="width:380px">
     <div class="modal-title"><span id="confirmTitle">Tasdiqlash</span></div>
@@ -616,32 +540,44 @@ async function askGemini(prompt) {
   } catch(e) { return null; }
 }
 
-// SUPABASE CONFIG
+// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════
+//  SUPABASE CONFIG & HELPERS
+// ═══════════════════════════════════════════
 const SB_URL = 'https://ostmvrztldvrkrbepufa.supabase.co';
-const SB_KEY = 'sb_publishable_WjEzCyna-xlGTkTunWzsSg_6h_Vujoz';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdG12cnp0bGR2cmtyYmVwdWZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MDQwMjQsImV4cCI6MjA5MzI4MDAyNH0.5ZNEuERkfDucM8FqfxrmjnMM9dyEwUiMRa49qzgB7Mw';
 
 async function sbFetch(path, opts = {}) {
-  const method = opts.method || 'GET';
-  const res = await fetch(SB_URL + '/rest/v1/' + path, {
-    method,
-    headers: {
+  try {
+    const method = opts.method || 'GET';
+    const headers = {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + SB_KEY,
       'Content-Type': 'application/json',
-      'Prefer': opts.prefer !== undefined ? opts.prefer : 'return=representation',
-      ...(opts.headers || {})
-    },
-    body: opts.body || undefined
-  });
-  if (!res.ok) { console.error('SB error', res.status, await res.text()); return null; }
-  const text = await res.text();
-  return text ? JSON.parse(text) : [];
+      'Prefer': opts.prefer !== undefined ? opts.prefer : 'return=representation'
+    };
+    const res = await fetch(SB_URL + '/rest/v1/' + path, {
+      method, headers,
+      body: opts.body || undefined
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      console.error('SB err', res.status, txt);
+      return null;
+    }
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+  } catch(e) {
+    console.error('SB fetch error:', e);
+    return null;
+  }
 }
 
-async function getTests() { return await sbFetch('tests?select=*&order=created_at.asc') || []; }
-async function getResults() { return await sbFetch('results?select=*&order=finished_at.asc') || []; }
-async function getStudents() { return await sbFetch('students?select=*&order=joined_at.asc') || []; }
-async function getRetakes() { return await sbFetch('retakes?select=*&order=created_at.asc') || []; }
+// ─── TESTS ───────────────────────────────
+async function getTests() {
+  const r = await sbFetch('tests?select=*&order=created_at.asc');
+  return r || [];
+}
 
 async function saveTestToDB(t, isEdit) {
   if (isEdit) {
@@ -653,44 +589,117 @@ async function saveTestToDB(t, isEdit) {
     return await sbFetch('tests', { method: 'POST', body: JSON.stringify(t) });
   }
 }
+
 async function deleteTestFromDB(id) {
   await sbFetch('tests?id=eq.' + encodeURIComponent(id), { method: 'DELETE', prefer: '' });
+  await sbFetch('results?test_id=eq.' + encodeURIComponent(id), { method: 'DELETE', prefer: '' });
 }
+
+// ─── RESULTS ─────────────────────────────
+async function getResults() {
+  const r = await sbFetch('results?select=*&order=finished_at.asc');
+  return (r || []).map(x => ({
+    id: String(x.id || ''),
+    studentName: x.student_name || '',
+    login: x.login || '',
+    testId: x.test_id || '',
+    testName: x.test_name || '',
+    correct: x.correct || 0,
+    total: x.total || 0,
+    percent: x.percent || 0,
+    duration: x.duration || '',
+    answers: x.answers || {},
+    hasClosed: x.has_closed || false,
+    closedTotal: x.closed_total || 0,
+    openTotal: x.open_total || 0,
+    finishedAt: x.finished_at ? new Date(x.finished_at).toLocaleString('uz-UZ') : ''
+  }));
+}
+
 async function saveResult(r) {
-  return await sbFetch('results', { method: 'POST', body: JSON.stringify({
-    student_name: r.studentName, login: r.login, test_id: r.testId, test_name: r.testName,
-    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration, answers: r.answers
-  })});
+  const id = 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  const payload = {
+    id,
+    student_name: r.studentName,
+    login: r.login,
+    test_id: r.testId,
+    test_name: r.testName,
+    correct: r.correct,
+    total: r.total,
+    percent: r.percent,
+    duration: r.duration,
+    answers: r.answers,
+    has_closed: r.hasClosed || false,
+    closed_total: r.closedTotal || 0,
+    open_total: r.openTotal || r.total
+  };
+  const res = await sbFetch('results', { method: 'POST', body: JSON.stringify(payload) });
+  if (!res) {
+    console.error('saveResult FAILED - Supabase xatosi');
+    toast('⚠️ Natija saqlanmadi! Supabase xatosi.', 'error');
+  }
+  return res;
 }
+
 async function deleteResultsForStudent(studentName, testId) {
-  await sbFetch('results?student_name=eq.' + encodeURIComponent(studentName) + '&test_id=eq.' + encodeURIComponent(testId), { method: 'DELETE', prefer: '' });
+  await sbFetch(
+    'results?student_name=eq.' + encodeURIComponent(studentName) + '&test_id=eq.' + encodeURIComponent(testId),
+    { method: 'DELETE', prefer: '' }
+  );
 }
-async function deleteResultsByTestId(testId) {
-  await sbFetch('results?test_id=eq.' + encodeURIComponent(testId), { method: 'DELETE', prefer: '' });
+
+async function updateResultInDB(id, patch) {
+  const dbPatch = {};
+  if (patch.answers !== undefined) dbPatch.answers = patch.answers;
+  if (patch.correct !== undefined) dbPatch.correct = patch.correct;
+  if (patch.percent !== undefined) dbPatch.percent = patch.percent;
+  await sbFetch('results?id=eq.' + encodeURIComponent(id), {
+    method: 'PATCH', body: JSON.stringify(dbPatch)
+  });
 }
+
+// ─── STUDENTS ─────────────────────────────
+async function getStudents() {
+  const r = await sbFetch('students?select=*&order=joined_at.asc');
+  return (r || []).map(x => ({ name: x.name, login: x.login, joinedAt: x.joined_at }));
+}
+
 async function saveStudent(s) {
   const ex = await sbFetch('students?name=eq.' + encodeURIComponent(s.name) + '&select=id');
   if (ex && ex.length > 0) return;
-  return await sbFetch('students', { method: 'POST', body: JSON.stringify({ name: s.name, login: s.login }) });
-}
-async function saveRetake(r) {
-  return await sbFetch('retakes', { method: 'POST', body: JSON.stringify({
-    student_name: r.studentName, login: r.login, test_id: r.testId, test_name: r.testName, status: 'pending'
-  })});
-}
-async function updateRetakeStatus(id, status) {
-  return await sbFetch('retakes?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status }) });
+  await sbFetch('students', { method: 'POST', body: JSON.stringify({ name: s.name, login: s.login }) });
 }
 
-function normResult(r) {
-  return { studentName: r.student_name, login: r.login, testId: r.test_id, testName: r.test_name,
-    correct: r.correct, total: r.total, percent: r.percent, duration: r.duration, answers: r.answers || {},
-    finishedAt: r.finished_at ? new Date(r.finished_at).toLocaleString('uz-UZ') : '' };
+// ─── RETAKES ─────────────────────────────
+async function getRetakes() {
+  const r = await sbFetch('retakes?select=*&order=created_at.asc');
+  return (r || []).map(x => ({
+    id: x.id,
+    studentName: x.student_name,
+    login: x.login,
+    testId: x.test_id,
+    testName: x.test_name,
+    status: x.status,
+    requestedAt: x.created_at ? new Date(x.created_at).toLocaleString('uz-UZ') : ''
+  }));
 }
-function normStudent(s) { return { name: s.name, login: s.login, joinedAt: s.joined_at }; }
-function normRetake(r) {
-  return { id: r.id, studentName: r.student_name, login: r.login, testId: r.test_id, testName: r.test_name,
-    status: r.status, requestedAt: r.created_at ? new Date(r.created_at).toLocaleString('uz-UZ') : '' };
+
+async function saveRetake(r) {
+  const id = 'rt_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  await sbFetch('retakes', { method: 'POST', body: JSON.stringify({
+    id,
+    student_name: r.studentName,
+    login: r.login,
+    test_id: r.testId,
+    test_name: r.testName,
+    status: 'pending'
+  })});
+}
+
+async function updateRetakeStatus(id, status) {
+  await sbFetch('retakes?id=eq.' + encodeURIComponent(id), {
+    method: 'PATCH', body: JSON.stringify({ status })
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -700,8 +709,6 @@ const ADMIN_LOGIN = 'ustoz2026';
 const ADMIN_PASS  = 'ustoz2026';
 const ST_LOGIN    = 'student';
 const ST_PASS     = 'studentfor';
-
-
 
 // ═══════════════════════════════════════════
 //  STATE
@@ -716,19 +723,27 @@ let questionCount = 0;
 let activeTest = null;
 let qIndex = 0;
 let qAnswers = {};
-let qTimer = null;
+let qTimerInterval = null;
 let qTimeLeft = 0;
 
 // ═══════════════════════════════════════════
 //  SCREEN MANAGER
 // ═══════════════════════════════════════════
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
-  document.getElementById('resultScreen').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = '';
+  });
+  const rs = document.getElementById('resultScreen');
+  rs.style.display = 'none';
+
   const el = document.getElementById(id);
   if (!el) return;
-  if (id === 'resultScreen') { el.style.display = 'flex'; }
-  else { el.classList.add('active'); }
+  if (id === 'resultScreen') {
+    el.style.display = 'flex';
+  } else {
+    el.classList.add('active');
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -740,30 +755,47 @@ document.getElementById('li').addEventListener('input', function() {
     (v === ADMIN_LOGIN || v === ST_LOGIN) ? 'block' : 'none';
   document.getElementById('loginErr').style.display = 'none';
 });
-document.getElementById('li').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('li').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('pw').focus(); });
 document.getElementById('pw').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
 function doLogin() {
   const login = document.getElementById('li').value.trim();
-  const pw    = document.getElementById('pw').value;
+  const pw    = document.getElementById('pw').value.trim();
   const err   = document.getElementById('loginErr');
   err.style.display = 'none';
 
+  if (!login) { showErr(err, "Login kiriting!"); return; }
+
   if (login === ADMIN_LOGIN) {
-    if (pw !== ADMIN_PASS) { showErr(err, 'Parol noto\'g\'ri!'); return; }
+    // Parol maydoni ko'rinmasa, ko'rsatamiz
+    const pwField = document.getElementById('pwField');
+    if (pwField.style.display === 'none') {
+      pwField.style.display = 'block';
+      document.getElementById('pw').focus();
+      return;
+    }
+    if (!pw) { showErr(err, "Parolni kiriting!"); return; }
+    if (pw !== ADMIN_PASS) { showErr(err, "Parol noto'g'ri!"); return; }
     currentRole = 'admin';
     currentFullName = 'Administrator';
     currentLogin = login;
     showScreen('adminScreen');
     adminPage('dashboard');
   } else if (login === ST_LOGIN) {
-    if (pw !== ST_PASS) { showErr(err, 'Parol noto\'g\'ri!'); return; }
+    const pwField = document.getElementById('pwField');
+    if (pwField.style.display === 'none') {
+      pwField.style.display = 'block';
+      document.getElementById('pw').focus();
+      return;
+    }
+    if (!pw) { showErr(err, "Parolni kiriting!"); return; }
+    if (pw !== ST_PASS) { showErr(err, "Parol noto'g'ri!"); return; }
     currentRole = 'student';
     currentLogin = login;
     showScreen('nameScreen');
-    document.getElementById('fnIn').focus();
+    setTimeout(() => document.getElementById('fnIn').focus(), 100);
   } else {
-    showErr(err, 'Login topilmadi!');
+    showErr(err, "Login topilmadi! Admin: ustoz2026 | O'quvchi: student");
   }
 }
 
@@ -794,7 +826,7 @@ async function doName() {
 }
 
 function logout() {
-  clearInterval(qTimer);
+  clearInterval(qTimerInterval);
   currentRole = currentFullName = currentLogin = '';
   document.getElementById('li').value = '';
   document.getElementById('pw').value = '';
@@ -810,44 +842,61 @@ function logout() {
 async function adminPage(page) {
   document.querySelectorAll('#adminScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#adminScreen .nav-item');
-  const pages = ['dashboard','tests','students','results','retake'];
+  const pages = ['dashboard','tests','students','results','closed-review','retake'];
   const idx = pages.indexOf(page);
   if (btns[idx]) btns[idx].classList.add('active');
 
   await updateRetakeBadge();
+  await updateClosedBadge();
 
   const c = document.getElementById('adminContent');
   c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
-  if (page === 'dashboard') c.innerHTML = await adminDashboardHTML();
-  else if (page === 'tests') c.innerHTML = await adminTestsHTML();
-  else if (page === 'students') c.innerHTML = await adminStudentsHTML();
-  else if (page === 'results') c.innerHTML = await adminResultsHTML();
-  else if (page === 'retake') c.innerHTML = await adminRetakeHTML();
+
+  (async () => {
+    if (page === 'dashboard') c.innerHTML = await adminDashboardHTML();
+    else if (page === 'tests') c.innerHTML = await adminTestsHTML();
+    else if (page === 'students') c.innerHTML = await adminStudentsHTML();
+    else if (page === 'results') c.innerHTML = await adminResultsHTML();
+    else if (page === 'closed-review') c.innerHTML = await adminClosedReviewHTML();
+    else if (page === 'retake') c.innerHTML = await adminRetakeHTML();
+  })();
 }
 
 async function updateRetakeBadge() {
-  const raw = await getRetakes();
-  const pending = raw.filter(r => r.status === 'pending').length;
+  const pending = (await getRetakes()).filter(r => r.status === 'pending').length;
   const badge = document.getElementById('retakeBadge');
+  if (!badge) return;
+  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
+async function updateClosedBadge() {
+  const results = await getResults();
+  const pending = results.filter(r => {
+    const ans = r.answers || {};
+    return Object.values(ans).some(v => typeof v === 'object' && v !== null && v.type === 'closed' && v.score === null);
+  }).length;
+  const badge = document.getElementById('closedBadge');
+  if (!badge) return;
   if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline'; }
   else { badge.style.display = 'none'; }
 }
 
 // DASHBOARD
 async function adminDashboardHTML() {
-  const [testsRaw, resultsRaw, studentsRaw, retakesRaw] = await Promise.all([getTests(), getResults(), getStudents(), getRetakes()]);
-  const tests = testsRaw;
-  const results = resultsRaw.map(normResult);
-  const students = studentsRaw.map(normStudent);
-  const pendingCount = retakesRaw.filter(r => r.status === 'pending').length;
-  const avgScore = results.length ? Math.round(results.reduce((s,r) => s + r.percent, 0) / results.length) : 0;
+  const tests = await getTests();
+  const results = await getResults();
+  const students = await getStudents();
+  const retakes = await getRetakes();
+  const pendingCount = retakes.filter(r => r.status === 'pending').length;
+  const avgScore = results.length ? Math.round(results.reduce((s,r) => s + (r.percent||0), 0) / results.length) : 0;
 
   const recent = results.slice(-6).reverse().map(r => `
     <tr>
-      <td><strong>${r.studentName}</strong></td>
-      <td>${r.testName}</td>
+      <td><strong>${esc(r.studentName)}</strong></td>
+      <td>${esc(r.testName)}</td>
       <td><span class="badge ${r.percent>=70?'badge-green':r.percent>=40?'badge-yellow':'badge-red'}">${r.correct}/${r.total} — ${r.percent}%</span></td>
-      <td style="color:var(--muted)">${r.finishedAt}</td>
+      <td style="color:var(--muted)">${esc(r.finishedAt||'')}</td>
     </tr>
   `).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Hali natijalar yo\'q</td></tr>';
 
@@ -874,7 +923,7 @@ async function adminTestsHTML() {
   const tests = await getTests();
   const rows = tests.map(t => `
     <tr>
-      <td><strong>${t.name}</strong></td>
+      <td><strong>${esc(t.name)}</strong></td>
       <td>${t.questions.length} ta</td>
       <td>${t.duration} daqiqa</td>
       <td><span class="badge ${t.status==='active'?'badge-green':'badge-gray'}">${t.status==='active'?'Faol':'Qoralama'}</span></td>
@@ -907,17 +956,18 @@ async function adminTestsHTML() {
 
 // STUDENTS
 async function adminStudentsHTML() {
-  const [studentsRaw, resultsRaw] = await Promise.all([getStudents(), getResults()]);
-  const students = studentsRaw.map(normStudent);
-  const results = resultsRaw.map(normResult);
+  const students = await getStudents();
+  const results = await getResults();
+
   const rows = students.map(s => {
     const sRes = results.filter(r => r.studentName === s.name);
-    const avg = sRes.length ? Math.round(sRes.reduce((a,r) => a+r.percent,0)/sRes.length) : null;
+    const avg = sRes.length ? Math.round(sRes.reduce((a,r) => a+(r.percent||0), 0)/sRes.length) : null;
+    const joined = s.joinedAt ? new Date(s.joinedAt).toLocaleDateString('uz-UZ') : '—';
     return `<tr>
-      <td><strong>${s.name}</strong></td>
+      <td><strong>${esc(s.name)}</strong></td>
       <td>${sRes.length}</td>
       <td>${avg !== null ? `<span class="badge ${avg>=70?'badge-green':avg>=40?'badge-yellow':'badge-red'}">${avg}%</span>` : '—'}</td>
-      <td style="color:var(--muted)">${new Date(s.joinedAt).toLocaleDateString('uz-UZ')}</td>
+      <td style="color:var(--muted)">${joined}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:24px">Hali o\'quvchi yo\'q</td></tr>';
 
@@ -935,17 +985,16 @@ async function adminStudentsHTML() {
 
 // RESULTS
 async function adminResultsHTML() {
-  const resultsRaw = await getResults();
-  const results = resultsRaw.map(normResult).reverse();
+  const results = (await getResults()).slice().reverse();
   const rows = results.map((r,i) => `
     <tr>
       <td>${i+1}</td>
-      <td><strong>${r.studentName}</strong></td>
-      <td>${r.testName}</td>
+      <td><strong>${esc(r.studentName)}</strong></td>
+      <td>${esc(r.testName)}</td>
       <td>${r.correct}/${r.total}</td>
       <td><span class="badge ${r.percent>=70?'badge-green':r.percent>=40?'badge-yellow':'badge-red'}">${r.percent}%</span></td>
-      <td style="color:var(--muted)">${r.duration}</td>
-      <td style="color:var(--muted)">${r.finishedAt}</td>
+      <td style="color:var(--muted)">${esc(r.duration||'')}</td>
+      <td style="color:var(--muted)">${esc(r.finishedAt||'')}</td>
     </tr>
   `).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">Hali natijalar yo\'q</td></tr>';
 
@@ -963,16 +1012,15 @@ async function adminResultsHTML() {
 
 // RETAKE
 async function adminRetakeHTML() {
-  const retakesRaw = await getRetakes();
-  const retakes = retakesRaw.map(normRetake);
+  const retakes = await getRetakes();
   const pending = retakes.filter(r => r.status === 'pending');
   const done    = retakes.filter(r => r.status !== 'pending');
 
   const pRows = pending.map(r => `
     <div class="retake-req">
       <div class="retake-info">
-        <strong>${r.studentName}</strong>
-        <span>Test: ${r.testName} · So'rov: ${r.requestedAt}</span>
+        <strong>${esc(r.studentName)}</strong>
+        <span>Test: ${esc(r.testName)} · So'rov: ${esc(r.requestedAt||'')}</span>
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-green btn-sm" onclick="approveRetake('${r.id}')">✓ Tasdiqlash</button>
@@ -983,10 +1031,10 @@ async function adminRetakeHTML() {
 
   const dRows = done.slice(-10).reverse().map(r => `
     <tr>
-      <td>${r.studentName}</td>
-      <td>${r.testName}</td>
+      <td>${esc(r.studentName)}</td>
+      <td>${esc(r.testName)}</td>
       <td><span class="badge ${r.status==='approved'?'badge-green':'badge-red'}">${r.status==='approved'?'Tasdiqlandi':'Rad etildi'}</span></td>
-      <td style="color:var(--muted)">${r.requestedAt}</td>
+      <td style="color:var(--muted)">${esc(r.requestedAt||'')}</td>
     </tr>
   `).join('');
 
@@ -1002,23 +1050,116 @@ async function adminRetakeHTML() {
     </div>` : ''}`;
 }
 
+// CLOSED TEST REVIEW
+async function adminClosedReviewHTML() {
+  const results = await getResults();
+  const tests = await getTests();
+
+  const withClosed = results.filter(r => {
+    const ans = r.answers || {};
+    return Object.values(ans).some(v => typeof v === 'object' && v !== null && v.type === 'closed');
+  });
+
+  if (withClosed.length === 0) {
+    return `
+      <div class="page-head"><h1>Yopiq javoblar tekshiruvi</h1><p>O'quvchilarning yopiq savollarga javoblari</p></div>
+      <div class="empty"><div class="empty-icon">✅</div><p>Tekshiriladigan yopiq javoblar yo'q</p></div>`;
+  }
+
+  const cards = withClosed.map(r => {
+    const test = tests.find(t => t.id === r.testId);
+    if (!test) return '';
+    const ans = r.answers || {};
+    const closedEntries = Object.entries(ans).filter(([k,v]) => typeof v === 'object' && v !== null && v.type === 'closed');
+    const pending = closedEntries.filter(([k,v]) => v.score === null);
+
+    const rows = closedEntries.map(([idx, v]) => {
+      const q = test.questions[parseInt(idx)];
+      const qText = q ? q.text : `Savol ${parseInt(idx)+1}`;
+      const correctKey = q ? (q.correctText || '—') : '—';
+      const isPending = v.score === null;
+      return `
+        <div class="check-row" style="${isPending ? '' : 'opacity:.7'}">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:3px">${esc(qText)}</div>
+            <div class="student-ans">"${esc(v.text)}"</div>
+            <div style="margin-top:3px;color:var(--gold);font-size:12px">✓ Kalit: ${esc(correctKey)}</div>
+          </div>
+          ${isPending
+            ? `<div class="check-btn-grp">
+                <button class="btn btn-green btn-sm" onclick="gradeAnswer('${esc(r.id)}','${idx}',1)">✓ To'g'ri</button>
+                <button class="btn btn-red btn-sm" onclick="gradeAnswer('${esc(r.id)}','${idx}',0)">✕ Xato</button>
+               </div>`
+            : `<span class="badge ${v.score===1?'badge-green':'badge-red'}">${v.score===1?"✓ To'g'ri":"✕ Xato"}</span>`
+          }
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title" style="justify-content:space-between">
+          <span>👤 ${esc(r.studentName)} · <span style="color:var(--muted)">${esc(r.testName)}</span></span>
+          <span class="badge ${pending.length>0?'badge-yellow':'badge-green'}">${pending.length>0?`${pending.length} ta kutmoqda`:'Barcha tekshirildi'}</span>
+        </div>
+        ${rows}
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="page-head"><h1>Yopiq javoblar tekshiruvi</h1><p>O'quvchilarning yopiq savollarga javoblari</p></div>
+    ${cards}`;
+}
+
+async function gradeAnswer(resultId, qIdx, score) {
+  const results = await getResults();
+  const r = results.find(x => x.id === resultId);
+  if (!r) { toast('Natija topilmadi', 'error'); return; }
+
+  const answers = r.answers || {};
+  if (answers[qIdx] && typeof answers[qIdx] === 'object') {
+    answers[qIdx].score = score;
+  }
+
+  // Recalculate
+  const tests = await getTests();
+  const test = tests.find(t => t.id === r.testId);
+  let newCorrect = 0;
+  if (test) {
+    test.questions.forEach((q, i) => {
+      const a = answers[i];
+      if (q.type === 'closed') {
+        if (a && typeof a === 'object' && a.score === 1) newCorrect++;
+      } else {
+        if (a === q.correct) newCorrect++;
+      }
+    });
+  }
+  const newPercent = r.total > 0 ? Math.round(newCorrect / r.total * 100) : 0;
+  await updateResultInDB(resultId, { answers, correct: newCorrect, percent: newPercent });
+
+  toast(score === 1 ? "✓ To'g'ri deb belgilandi" : "✕ Xato deb belgilandi", score === 1 ? 'success' : 'error');
+  adminPage('closed-review');
+}
+
 async function approveRetake(id) {
-  const retakesRaw = await getRetakes();
-  const r = retakesRaw.find(x => x.id === id);
+  const retakesAll = await getRetakes();
+  const r = retakesAll.find(x => x.id === id);
   if (!r) return;
   await updateRetakeStatus(id, 'approved');
-  await deleteResultsForStudent(r.student_name, r.test_id);
-  toast('✓ Tasdiqlandi. O\'quvchi qayta ishlashi mumkin', 'success');
+  await deleteResultsForStudent(r.studentName, r.testId);
+  toast("✓ Tasdiqlandi. O'quvchi qayta ishlashi mumkin", 'success');
   adminPage('retake');
 }
 
 async function rejectRetake(id) {
   await updateRetakeStatus(id, 'rejected');
-  toast('So\'rov rad etildi', 'error');
+  toast("So'rov rad etildi", 'error');
   adminPage('retake');
 }
 
-// TEST CRUD
+// ═══════════════════════════════════════════
+//  TEST CRUD
+// ═══════════════════════════════════════════
 function openAddTest() {
   editingTestId = null;
   questionCount = 0;
@@ -1052,26 +1193,77 @@ function addQuestion(data) {
   questionCount++;
   const n = questionCount;
   const letters = ['A','B','C','D'];
-  const optsHTML = [0,1,2,3].map(i => `
+  const qtype = data ? (data.type || 'open') : 'open';
+
+  const optsHTML_abcd = [0,1,2,3].map(i => `
     <div class="opt-inp-wrap">
       <input type="radio" class="opt-radio" name="correct_${n}" value="${i}" id="r${n}_${i}" ${data && data.correct === i ? 'checked' : ''}>
-      <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}" value="${data ? data.options[i]||'' : ''}">
+      <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}" value="${data && data.options ? esc(data.options[i]||'') : ''}">
     </div>
   `).join('');
+
+  const optsHTML_closed = `
+    <div class="f-group" style="margin-top:8px">
+      <label class="f-label">To'g'ri javob (matn)</label>
+      <input class="f-input" id="closed_ans_${n}" placeholder="To'g'ri javobni kiriting..." value="${data && data.correctText ? esc(data.correctText) : ''}">
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">O'quvchi matn yozadi, admin tekshiradi</div>`;
 
   const div = document.createElement('div');
   div.className = 'q-block';
   div.id = `qblock_${n}`;
+  div.dataset.qtype = qtype;
+
   div.innerHTML = `
-    <div class="q-block-num">Savol ${n}</div>
+    <div class="q-block-num">Savol ${n} <span class="q-type-badge ${qtype==='open'?'open':''}" id="qtypelabel_${n}">${qtype==='open'?'Ochiq (A/B/C/D)':'Yopiq (Matn)'}</span></div>
     <button class="remove-q" onclick="removeQuestion(${n})">✕ O'chirish</button>
-    <div class="f-group" style="margin-bottom:10px">
-      <input class="f-input" id="qt${n}" placeholder="Savol matni..." value="${data ? data.text : ''}">
+    <div class="type-toggle" style="margin-bottom:10px">
+      <button class="type-btn ${qtype==='open'?'active':''}" onclick="setQType(${n},'open')">📋 Ochiq (A/B/C/D)</button>
+      <button class="type-btn ${qtype==='closed'?'active':''}" onclick="setQType(${n},'closed')">✍️ Yopiq (Matn)</button>
     </div>
-    <div class="opts-row">${optsHTML}</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>
+    <div class="f-group" style="margin-bottom:10px">
+      <input class="f-input" id="qt${n}" placeholder="Savol matni..." value="${data ? esc(data.text||'') : ''}">
+    </div>
+    <div id="qopts_${n}">
+      ${qtype==='open' ? `<div class="opts-row">${optsHTML_abcd}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>` : optsHTML_closed}
+    </div>
   `;
   document.getElementById('questionsBuilder').appendChild(div);
+}
+
+function setQType(n, type) {
+  const block = document.getElementById(`qblock_${n}`);
+  if (!block) return;
+  block.dataset.qtype = type;
+  const letters = ['A','B','C','D'];
+
+  block.querySelectorAll('.type-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0 && type==='open') || (i===1 && type==='closed'));
+  });
+
+  const lbl = document.getElementById(`qtypelabel_${n}`);
+  if (lbl) {
+    lbl.textContent = type==='open' ? 'Ochiq (A/B/C/D)' : 'Yopiq (Matn)';
+    lbl.className = `q-type-badge ${type==='open'?'open':''}`;
+  }
+
+  const optsDiv = document.getElementById(`qopts_${n}`);
+  if (type === 'open') {
+    const optsHTML_abcd = [0,1,2,3].map(i => `
+      <div class="opt-inp-wrap">
+        <input type="radio" class="opt-radio" name="correct_${n}" value="${i}" id="r${n}_${i}">
+        <input class="f-input" style="flex:1" placeholder="${letters[i]} varianti" id="opt${n}_${i}">
+      </div>
+    `).join('');
+    optsDiv.innerHTML = `<div class="opts-row">${optsHTML_abcd}</div><div style="font-size:11px;color:var(--muted);margin-top:8px">↑ To'g'ri javob oldidagi tugmachani bosing</div>`;
+  } else {
+    optsDiv.innerHTML = `
+      <div class="f-group" style="margin-top:8px">
+        <label class="f-label">To'g'ri javob (matn)</label>
+        <input class="f-input" id="closed_ans_${n}" placeholder="To'g'ri javobni kiriting...">
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">O'quvchi matn yozadi, admin tekshiradi</div>`;
+  }
 }
 
 function removeQuestion(n) {
@@ -1090,22 +1282,42 @@ async function saveTest() {
   const qBlocks = document.querySelectorAll('.q-block');
   const questions = [];
   let valid = true;
+  let errMsg = '';
 
   qBlocks.forEach(block => {
+    if (!valid) return;
     const n = block.id.replace('qblock_','');
-    const text = document.getElementById(`qt${n}`)?.value.trim();
-    if (!text) { valid = false; return; }
-    const options = [0,1,2,3].map(i => document.getElementById(`opt${n}_${i}`)?.value.trim() || '');
-    const radios = block.querySelectorAll(`input[name="correct_${n}"]`);
-    let correct = -1;
-    radios.forEach(r => { if(r.checked) correct = parseInt(r.value); });
-    if (correct === -1) { valid = false; return; }
-    questions.push({ text, options, correct });
+    const qtype = block.dataset.qtype || 'open';
+    const textEl = document.getElementById(`qt${n}`);
+    const text = textEl ? textEl.value.trim() : '';
+    if (!text) { valid = false; errMsg = "Barcha savol matnlarini to'ldiring!"; return; }
+
+    if (qtype === 'closed') {
+      const closedEl = document.getElementById(`closed_ans_${n}`);
+      const correctText = closedEl ? closedEl.value.trim() : '';
+      if (!correctText) { valid = false; errMsg = "Yopiq savol uchun to'g'ri javobni kiriting!"; return; }
+      questions.push({ text, type: 'closed', correctText, options: [], correct: -1 });
+    } else {
+      const options = [0,1,2,3].map(i => {
+        const el = document.getElementById(`opt${n}_${i}`);
+        return el ? el.value.trim() : '';
+      });
+      const radios = block.querySelectorAll(`input[name="correct_${n}"]`);
+      let correct = -1;
+      radios.forEach(r => { if(r.checked) correct = parseInt(r.value); });
+      if (correct === -1) { valid = false; errMsg = "Har bir savol uchun to'g'ri javobni belgilang!"; return; }
+      if (options.some(o => !o)) { valid = false; errMsg = "Barcha javob variantlarini to'ldiring!"; return; }
+      questions.push({ text, type: 'open', options, correct });
+    }
   });
 
-  if (!valid || questions.length === 0) { toast('Barcha savollarni to\'liq to\'ldiring!', 'error'); return; }
+  if (!valid) { toast(errMsg, 'error'); return; }
+  if (questions.length === 0) { toast("Kamida 1 ta savol qo'shing!", 'error'); return; }
 
-  const testObj = { id: editingTestId || ('test_' + Date.now()), name, description: desc, duration, status, questions };
+  const testObj = {
+    id: editingTestId || ('test_' + Date.now()),
+    name, description: desc, duration, status, questions
+  };
   await saveTestToDB(testObj, !!editingTestId);
   closeModal();
   toast(editingTestId ? '✓ Test yangilandi' : '✓ Test yaratildi', 'success');
@@ -1113,15 +1325,16 @@ async function saveTest() {
 }
 
 async function deleteTest(id) {
-  openConfirm('Testni o\'chirish', 'Bu testni o\'chirsangiz, barcha natijalar ham o\'chib ketadi. Davom etasizmi?', async () => {
+  openConfirm("Testni o'chirish", "Bu testni o'chirsangiz, barcha natijalar ham o'chib ketadi. Davom etasizmi?", async () => {
     await deleteTestFromDB(id);
-    await deleteResultsByTestId(id);
-    toast('Test o\'chirildi', 'error');
+    toast("Test o'chirildi", 'error');
     adminPage('tests');
   });
 }
 
-// STUDENT PAGES
+// ═══════════════════════════════════════════
+//  STUDENT PAGES
+// ═══════════════════════════════════════════
 async function studentPage(page) {
   document.querySelectorAll('#studentScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#studentScreen .nav-item');
@@ -1130,21 +1343,23 @@ async function studentPage(page) {
 
   const c = document.getElementById('studentContent');
   c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
-  if (page === 'tests') c.innerHTML = await studentTestsHTML();
-  else c.innerHTML = await studentResultsHTML();
+  (async () => {
+    if (page === 'tests') c.innerHTML = await studentTestsHTML();
+    else c.innerHTML = await studentResultsHTML();
+  })();
 }
 
 async function studentTestsHTML() {
-  const [tests, resultsRaw, retakesRaw] = await Promise.all([getTests(), getResults(), getRetakes()]);
-  const activetests = tests.filter(t => t.status === 'active');
-  const results = resultsRaw.map(normResult);
-  const retakes = retakesRaw.map(normRetake);
+  const tests = await getTests();
+  const results = await getResults();
+  const retakes = await getRetakes();
+  const activeTests = tests.filter(t => t.status === 'active');
 
-  if (activetests.length === 0) return `
+  if (activeTests.length === 0) return `
     <div class="page-head"><h1>Testlar</h1><p>Faol testlar</p></div>
     <div class="empty"><div class="empty-icon">📭</div><p>Hozircha faol testlar yo'q. Admin tez orada qo'shadi!</p></div>`;
 
-  const tiles = activetests.map(t => {
+  const tiles = activeTests.map(t => {
     const done = results.find(r => r.studentName === currentFullName && r.testId === t.id);
     const retakeApproved = retakes.find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'approved');
     const pendingRetake = retakes.find(rq => rq.studentName === currentFullName && rq.testId === t.id && rq.status === 'pending');
@@ -1153,23 +1368,23 @@ async function studentTestsHTML() {
       return `<div class="test-tile done">
         <div class="done-overlay"><span class="badge badge-green">✓ Bajarildi</span></div>
         <div class="test-tile-icon">📝</div>
-        <h3>${t.name}</h3>
-        <p>${t.description || 'Test bajarildi'}</p>
+        <h3>${esc(t.name)}</h3>
+        <p>${esc(t.description || 'Test bajarildi')}</p>
         <div class="test-meta">
           <span>✅ ${done.correct}/${done.total} to'g'ri</span>
           <span>📊 ${done.percent}%</span>
-          <span>🕐 ${done.finishedAt}</span>
+          <span>🕐 ${esc(done.finishedAt||'')}</span>
         </div>
         ${pendingRetake
           ? '<div style="margin-top:12px"><span class="badge badge-yellow">⏳ Qayta urinish so\'rovi yuborildi</span></div>'
-          : `<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="requestRetake('${t.id}','${t.name}')">🔄 Qayta ishlash so'rash</button>`}
+          : `<button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="requestRetake(this)" data-tid="${esc(t.id)}" data-tname="${esc(t.name)}">🔄 Qayta ishlash so'rash</button>`}
       </div>`;
     }
 
     return `<div class="test-tile" onclick="startTest('${t.id}')">
       <div class="test-tile-icon">📝</div>
-      <h3>${t.name}</h3>
-      <p>${t.description || 'Testga o\'ting va bilimingizni tekshiring'}</p>
+      <h3>${esc(t.name)}</h3>
+      <p>${esc(t.description || "Testga o'ting va bilimingizni tekshiring")}</p>
       <div class="test-meta">
         <span>⏱ ${t.duration} daqiqa</span>
         <span>❓ ${t.questions.length} savol</span>
@@ -1179,21 +1394,20 @@ async function studentTestsHTML() {
   }).join('');
 
   return `
-    <div class="page-head"><h1>Salom, ${currentFullName.split(' ')[0]}! 👋</h1><p>Testni tanlang va boshlang</p></div>
+    <div class="page-head"><h1>Salom, ${esc(currentFullName.split(' ')[0])}! 👋</h1><p>Testni tanlang va boshlang</p></div>
     <div class="test-grid">${tiles}</div>`;
 }
 
 async function studentResultsHTML() {
-  const resultsRaw = await getResults();
-  const myResults = resultsRaw.map(normResult).filter(r => r.studentName === currentFullName).reverse();
-  const rows = myResults.map((r,i) => `
+  const results = (await getResults()).filter(r => r.studentName === currentFullName).reverse();
+  const rows = results.map((r,i) => `
     <tr>
       <td>${i+1}</td>
-      <td><strong>${r.testName}</strong></td>
+      <td><strong>${esc(r.testName)}</strong></td>
       <td>${r.correct}/${r.total}</td>
       <td><span class="badge ${r.percent>=70?'badge-green':r.percent>=40?'badge-yellow':'badge-red'}">${r.percent}%</span></td>
-      <td style="color:var(--muted)">${r.duration}</td>
-      <td style="color:var(--muted)">${r.finishedAt}</td>
+      <td style="color:var(--muted)">${esc(r.duration||'')}</td>
+      <td style="color:var(--muted)">${esc(r.finishedAt||'')}</td>
     </tr>
   `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Hali test topshirmagansiz</td></tr>';
 
@@ -1209,17 +1423,24 @@ async function studentResultsHTML() {
     </div>`;
 }
 
-async function requestRetake(testId, testName) {
-  const retakesRaw = await getRetakes();
-  const retakes = retakesRaw.map(normRetake);
+async function requestRetake(btnOrId, testName) {
+  let testId = btnOrId;
+  let tName = testName;
+  if (btnOrId && typeof btnOrId === 'object') {
+    testId = btnOrId.dataset.tid;
+    tName = btnOrId.dataset.tname;
+  }
+  const retakes = await getRetakes();
   const existing = retakes.find(r => r.studentName === currentFullName && r.testId === testId && r.status === 'pending');
-  if (existing) { toast('So\'rov allaqachon yuborilgan!'); return; }
-  await saveRetake({ studentName: currentFullName, login: currentLogin, testId, testName });
-  toast('📨 Qayta urinish so\'rovi adminga yuborildi', 'success');
+  if (existing) { toast("So'rov allaqachon yuborilgan!"); return; }
+  await saveRetake({ studentName: currentFullName, login: currentLogin, testId, testName: tName });
+  toast("📨 Qayta urinish so'rovi adminga yuborildi", 'success');
   studentPage('tests');
 }
 
-// QUIZ
+// ═══════════════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════════════
 async function startTest(id) {
   const tests = await getTests();
   activeTest = tests.find(t => t.id === id);
@@ -1237,8 +1458,9 @@ async function startTest(id) {
 function renderQuestion() {
   const q = activeTest.questions[qIndex];
   const total = activeTest.questions.length;
-  const answered = qAnswers[qIndex] !== undefined;
   const letters = ['A','B','C','D'];
+  const isClosed = q.type === 'closed';
+  const answered = qAnswers[qIndex] !== undefined;
 
   document.getElementById('qNum').textContent = `Savol ${qIndex+1} / ${total}`;
   document.getElementById('qText').textContent = q.text;
@@ -1247,17 +1469,40 @@ function renderQuestion() {
   document.getElementById('qStatus').textContent = answered ? '✓ Javob berildi' : '';
   document.getElementById('qNext').textContent = qIndex === total-1 ? '✅ Yakunlash' : 'Keyingisi →';
 
-  const chosen = qAnswers[qIndex];
-  document.getElementById('qOpts').innerHTML = q.options.map((opt, i) => {
-    let cls = '';
-    if (answered) {
-      if (i === q.correct) cls = 'correct';
-      else if (i === chosen && i !== q.correct) cls = 'wrong';
-    } else if (i === chosen) cls = 'sel';
-    return `<button class="opt ${cls}" onclick="selectOpt(${i})" ${answered?'disabled':''}>
-      <div class="opt-letter">${letters[i]}</div>${opt}
-    </button>`;
-  }).join('');
+  if (isClosed) {
+    const savedAns = qAnswers[qIndex];
+    const val = (savedAns && typeof savedAns === 'object') ? (savedAns.text || '') : (savedAns || '');
+    const isAnswered = val !== '' && val !== undefined;
+    document.getElementById('qOpts').innerHTML = `
+      <div class="closed-answer-wrap">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">✍️ <span class="q-type-badge">Yopiq savol</span> — matn yozing:</div>
+        <textarea class="closed-answer-input" id="closedInput" rows="3" placeholder="Javobingizni yozing..." ${isAnswered ? 'disabled' : ''}>${esc(val)}</textarea>
+        ${!isAnswered
+          ? `<button class="btn btn-accent" style="margin-top:10px;width:100%;justify-content:center" onclick="submitClosedAnswer()">✔ Javobni tasdiqlash</button>`
+          : `<div style="margin-top:8px;color:var(--muted);font-size:12px">⏳ Javobingiz admin tomonidan tekshiriladi</div>`}
+      </div>`;
+  } else {
+    const chosen = qAnswers[qIndex];
+    document.getElementById('qOpts').innerHTML = q.options.map((opt, i) => {
+      let cls = '';
+      if (answered) {
+        if (i === q.correct) cls = 'correct';
+        else if (i === chosen && i !== q.correct) cls = 'wrong';
+      } else if (i === chosen) cls = 'sel';
+      return `<button class="opt ${cls}" onclick="selectOpt(${i})" ${answered?'disabled':''}>
+        <div class="opt-letter">${letters[i]}</div>${esc(opt)}
+      </button>`;
+    }).join('');
+  }
+}
+
+function submitClosedAnswer() {
+  const input = document.getElementById('closedInput');
+  if (!input) return;
+  const val = input.value.trim();
+  if (!val) { toast('Javob yozing!', 'error'); return; }
+  qAnswers[qIndex] = { type: 'closed', text: val, score: null };
+  renderQuestion();
 }
 
 function selectOpt(i) {
@@ -1276,61 +1521,82 @@ function qPrev() {
 }
 
 function startQTimer() {
-  clearInterval(qTimer);
+  clearInterval(qTimerInterval);
   const el = document.getElementById('qTimer');
-  qTimer = setInterval(() => {
+  qTimerInterval = setInterval(() => {
     qTimeLeft--;
     const m = String(Math.floor(qTimeLeft/60)).padStart(2,'0');
     const s = String(qTimeLeft%60).padStart(2,'0');
     el.textContent = `${m}:${s}`;
     el.classList.toggle('red', qTimeLeft <= 60);
-    if (qTimeLeft <= 0) { clearInterval(qTimer); finishTest(); }
+    if (qTimeLeft <= 0) { clearInterval(qTimerInterval); finishTest(); }
   }, 1000);
 }
 
 async function finishTest() {
-  clearInterval(qTimer);
+  clearInterval(qTimerInterval);
   const test = activeTest;
   let correct = 0;
-  test.questions.forEach((q, i) => { if (qAnswers[i] === q.correct) correct++; });
+  let openTotal = 0;
+  let closedTotal = 0;
+
+  test.questions.forEach((q, i) => {
+    if (q.type === 'closed') {
+      closedTotal++;
+    } else {
+      openTotal++;
+      if (qAnswers[i] === q.correct) correct++;
+    }
+  });
+
   const total = test.questions.length;
-  const percent = Math.round(correct / total * 100);
+  const openPercent = openTotal > 0 ? Math.round(correct / openTotal * 100) : 100;
   const totalSeconds = test.duration * 60 - qTimeLeft;
   const durStr = `${Math.floor(totalSeconds/60)}:${String(totalSeconds%60).padStart(2,'0')}`;
 
-  await saveResult({
+  // Deep copy answers to avoid reference issues
+  const answersCopy = JSON.parse(JSON.stringify(qAnswers));
+
+  console.log('finishTest: saving result...', { currentFullName, testId: test.id });
+  const savedResult = await saveResult({
     studentName: currentFullName,
     login: currentLogin,
     testId: test.id,
     testName: test.name,
-    correct, total, percent,
+    correct,
+    total,
+    percent: openPercent,
     duration: durStr,
-    answers: { ...qAnswers }
+    answers: answersCopy,
+    hasClosed: closedTotal > 0,
+    closedTotal,
+    openTotal
   });
+  console.log('saveResult response:', savedResult);
 
   // Mark approved retake as used
-  const retakesRaw = await getRetakes();
-  for (const r of retakesRaw) {
-    if (r.student_name === currentFullName && r.test_id === test.id && r.status === 'approved') {
+  const retakes = await getRetakes();
+  for (const r of retakes) {
+    if (r.studentName === currentFullName && r.testId === test.id && r.status === 'approved') {
       await updateRetakeStatus(r.id, 'used');
     }
   }
 
   showScreen('resultScreen');
-  document.getElementById('resScore').innerHTML = `${correct}<sub>/${total}</sub>`;
+  document.getElementById('resScore').innerHTML = `${correct}<sub>/${openTotal || total}</sub>`;
   document.getElementById('resC').textContent = correct;
-  document.getElementById('resW').textContent = total - correct;
-  document.getElementById('resPct').textContent = percent + '%';
+  document.getElementById('resW').textContent = openTotal - correct;
+  document.getElementById('resPct').textContent = openPercent + '%';
 
   let emoji, label;
-  if (percent >= 86) { emoji='🏆'; label='A\'lo natija! Zo\'r!'; }
-  else if (percent >= 71) { emoji='🎉'; label='Yaxshi natija!'; }
-  else if (percent >= 55) { emoji='👍'; label='Qoniqarli'; }
-  else { emoji='📚'; label='Ko\'proq mashq kerak'; }
+  if (openPercent >= 86) { emoji='🏆'; label="A'lo natija! Zo'r!"; }
+  else if (openPercent >= 71) { emoji='🎉'; label='Yaxshi natija!'; }
+  else if (openPercent >= 55) { emoji='👍'; label='Qoniqarli'; }
+  else { emoji='📚'; label="Ko'proq mashq kerak"; }
   document.getElementById('resEmoji').textContent = emoji;
-  document.getElementById('resLabel').textContent = label;
+  document.getElementById('resLabel').textContent = label + (closedTotal > 0 ? ` · ${closedTotal} ta yopiq javob admin tekshiradi` : '');
 
-  runAIAnalysis(test, qAnswers, correct, total, percent);
+  runAIAnalysis(test, answersCopy, correct, openTotal || total, openPercent);
 }
 
 async function runAIAnalysis(test, answers, correct, total, percent) {
@@ -1338,8 +1604,11 @@ async function runAIAnalysis(test, answers, correct, total, percent) {
   aiBody.innerHTML = `<div class="ai-loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><span>AI tahlil qilmoqda...</span></div>`;
 
   const wrongOnes = test.questions.map((q, i) => {
-    if (answers[i] !== q.correct) {
-      return `- Savol: "${q.text}" | O'quvchi tanladi: "${q.options[answers[i]]??'javob berilmadi'}" | To'g'ri javob: "${q.options[q.correct]}"`;
+    if (q.type === 'closed') return null;
+    const a = answers[i];
+    if (a !== q.correct) {
+      const chosen = (a !== undefined && q.options[a]) ? q.options[a] : 'javob berilmadi';
+      return `- Savol: "${q.text}" | O'quvchi tanladi: "${chosen}" | To'g'ri javob: "${q.options[q.correct]}"`;
     }
     return null;
   }).filter(Boolean).join('\n');
@@ -1349,13 +1618,13 @@ async function runAIAnalysis(test, answers, correct, total, percent) {
     return;
   }
 
-  const prompt = `Sen o'zbek tilida yozuvchi pedagogik AI assistantsan. O'quvchi "${test.name}" testida ${total} savoldan ${correct} tasini to'g'ri yechdi (${percent}%). 
+  const prompt = `Sen o'zbek tilida yozuvchi pedagogik AI assistantsan. O'quvchi "${test.name}" testida ${total} savoldan ${correct} tasini to'g'ri yechdi (${percent}%).
 
 Xato javoblar:
 ${wrongOnes}
 
 Quyidagilarni qil:
-1. Har bir xato savol uchun nima noto'g'ri tushunilganini qisqacha izohlа (2-3 jumla)
+1. Har bir xato savol uchun nima noto'g'ri tushunilganini qisqacha izohla (2-3 jumla)
 2. To'g'ri javobni nima uchun to'g'ri ekanini tushuntir
 3. Oxirida umumiy maslahat ber (2-3 jumla)
 
@@ -1363,12 +1632,12 @@ Iliq, rag'batlantiruvchi ohangda yoz. Uzun bo'lmasin.`;
 
   const reply = await askGemini(prompt);
   if (reply) {
-    aiBody.innerHTML = `<div class="ai-msg">${reply}</div>`;
+    aiBody.innerHTML = `<div class="ai-msg">${esc(reply)}</div>`;
   } else {
-    aiBody.innerHTML = `<div class="ai-msg">⚠️ AI tahlil qilishda muammo yuz berdi. Gemini API kalitini tekshiring.
+    aiBody.innerHTML = `<div class="ai-msg">⚠️ AI tahlil qilishda muammo yuz berdi.
 
 Noto'g'ri javoblaringiz:
-${wrongOnes}</div>`;
+${esc(wrongOnes)}</div>`;
   }
 }
 
@@ -1394,7 +1663,6 @@ function openConfirm(title, msg, cb) {
   openModal('confirmModal');
 }
 
-// Close modals on backdrop click
 document.getElementById('testModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
 document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
 
@@ -1411,7 +1679,18 @@ function toast(msg, type='') {
   toastTO = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
-// INIT: Data is managed via Supabase
+// ═══════════════════════════════════════════
+//  XSS PROTECTION
+// ═══════════════════════════════════════════
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 </script>
 </body>
 </html>
