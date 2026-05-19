@@ -266,6 +266,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .retake-info strong{color:var(--gold);display:block;margin-bottom:2px}
 .retake-info span{color:var(--muted);font-size:12px}
 
+/* TEXT MATERIAL */
+.text-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:.2s}
+.text-card:hover{border-color:rgba(108,99,255,.3)}
+.text-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.text-card-title{font-family:var(--font-head);font-size:16px;font-weight:700;line-height:1.3}
+.text-card-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.text-card-body{color:rgba(240,238,255,.75);font-size:13px;line-height:1.7;white-space:pre-wrap}
+.text-card-body.collapsed{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+/* Text read modal */
+.text-read-modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:680px;max-height:85vh;overflow-y:auto;animation:fadeUp .3s cubic-bezier(.16,1,.3,1)}
+.text-read-body{color:rgba(240,238,255,.85);font-size:15px;line-height:1.9;white-space:pre-wrap;margin:20px 0}
+
 /* MOBILE */
 @media (max-width: 768px) {
   html,body{overflow:auto}
@@ -391,6 +404,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="nav-item" onclick="adminPage('results')"><span class="ni">🏆</span> Natijalar</button>
       <button class="nav-item" onclick="adminPage('closed-review')"><span class="ni">✍️</span> Yopiq javoblar <span class="nav-badge" id="closedBadge" style="display:none">0</span></button>
       <button class="nav-item" onclick="adminPage('retake')"><span class="ni">🔄</span> Qayta urinish <span class="nav-badge" id="retakeBadge" style="display:none">0</span></button>
+      <button class="nav-item" onclick="adminPage('texts')"><span class="ni">📖</span> Test matnlari</button>
     </div>
     <div class="content" id="adminContent"></div>
   </div>
@@ -408,7 +422,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <div class="layout">
     <div class="sidebar">
       <div class="nav-section">O'quvchi</div>
-      <button class="nav-item active" onclick="studentPage('tests')"><span class="ni">📝</span> Testlar</button>
+      <button class="nav-item active" onclick="studentPage('texts')"><span class="ni">📖</span> Matnlar</button>
+      <button class="nav-item" onclick="studentPage('tests')"><span class="ni">📝</span> Testlar</button>
       <button class="nav-item" onclick="studentPage('results')"><span class="ni">📊</span> Natijalarim</button>
     </div>
     <div class="content" id="studentContent"></div>
@@ -500,6 +515,53 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="btn btn-ghost" onclick="closeModal()">Bekor qilish</button>
       <button class="btn btn-accent" onclick="saveTest()">💾 Saqlash</button>
     </div>
+  </div>
+</div>
+
+<!-- TEXT MODAL -->
+<div class="modal-bg" id="textModal">
+  <div class="modal" style="width:640px">
+    <div class="modal-title">
+      <span id="textModalTitle">📖 Yangi matn</span>
+      <button class="modal-close" onclick="closeTextModal()">✕</button>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Matn sarlavhasi *</label>
+      <input class="f-input" id="tmTitle" placeholder="Masalan: Ona tili — 5-dars">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Mavzu / Kategoriya</label>
+      <input class="f-input" id="tmSubject" placeholder="Masalan: Ona tili, Matematika...">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Matn *</label>
+      <textarea class="f-textarea" id="tmBody" style="min-height:220px;line-height:1.7" placeholder="Matn mazmunini shu yerga yozing..."></textarea>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Bog'liq test (ixtiyoriy)</label>
+      <select class="f-select" id="tmLinkedTest">
+        <option value="">— Tanlanmagan —</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="closeTextModal()">Bekor qilish</button>
+      <button class="btn btn-accent" onclick="saveText()">💾 Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEXT READ MODAL (student) -->
+<div class="modal-bg" id="textReadModal">
+  <div class="text-read-modal">
+    <div class="modal-title">
+      <span id="trTitle" style="font-size:20px"></span>
+      <button class="modal-close" onclick="closeTextReadModal()">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+      <span class="badge badge-purple" id="trSubject"></span>
+    </div>
+    <div class="text-read-body" id="trBody"></div>
+    <div style="display:flex;gap:10px;justify-content:center;padding-top:16px;border-top:1px solid var(--border)" id="trTestBtn"></div>
   </div>
 </div>
 
@@ -702,6 +764,40 @@ async function updateRetakeStatus(id, status) {
   });
 }
 
+// ─── TEXTS ────────────────────────────────
+async function getTexts() {
+  const r = await sbFetch('texts?select=*&order=created_at.desc');
+  return (r || []).map(x => ({
+    id: x.id,
+    title: x.title || '',
+    subject: x.subject || '',
+    body: x.body || '',
+    linkedTestId: x.linked_test_id || '',
+    createdAt: x.created_at ? new Date(x.created_at).toLocaleDateString('uz-UZ') : ''
+  }));
+}
+
+async function saveTextToDB(t, isEdit) {
+  const payload = {
+    title: t.title,
+    subject: t.subject,
+    body: t.body,
+    linked_test_id: t.linkedTestId || null
+  };
+  if (isEdit) {
+    return await sbFetch('texts?id=eq.' + encodeURIComponent(t.id), {
+      method: 'PATCH', body: JSON.stringify(payload)
+    });
+  } else {
+    payload.id = 'txt_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+    return await sbFetch('texts', { method: 'POST', body: JSON.stringify(payload) });
+  }
+}
+
+async function deleteTextFromDB(id) {
+  await sbFetch('texts?id=eq.' + encodeURIComponent(id), { method: 'DELETE', prefer: '' });
+}
+
 // ═══════════════════════════════════════════
 //  CREDENTIALS
 // ═══════════════════════════════════════════
@@ -822,7 +918,7 @@ async function doName() {
 
   document.getElementById('stChip').textContent = currentFullName;
   showScreen('studentScreen');
-  studentPage('tests');
+  studentPage('texts');
 }
 
 function logout() {
@@ -842,7 +938,7 @@ function logout() {
 async function adminPage(page) {
   document.querySelectorAll('#adminScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#adminScreen .nav-item');
-  const pages = ['dashboard','tests','students','results','closed-review','retake'];
+  const pages = ['dashboard','tests','students','results','closed-review','retake','texts'];
   const idx = pages.indexOf(page);
   if (btns[idx]) btns[idx].classList.add('active');
 
@@ -859,6 +955,7 @@ async function adminPage(page) {
     else if (page === 'results') c.innerHTML = await adminResultsHTML();
     else if (page === 'closed-review') c.innerHTML = await adminClosedReviewHTML();
     else if (page === 'retake') c.innerHTML = await adminRetakeHTML();
+    else if (page === 'texts') c.innerHTML = await adminTextsHTML();
   })();
 }
 
@@ -1110,6 +1207,174 @@ async function adminClosedReviewHTML() {
     ${cards}`;
 }
 
+// TEXTS (Admin)
+async function adminTextsHTML() {
+  const texts = await getTexts();
+  const tests = await getTests();
+
+  const cards = texts.map(tx => {
+    const linkedTest = tests.find(t => t.id === tx.linkedTestId);
+    const preview = tx.body.length > 200 ? tx.body.slice(0, 200) + '…' : tx.body;
+    return `
+      <div class="text-card">
+        <div class="text-card-header">
+          <div>
+            <div class="text-card-title">${esc(tx.title)}</div>
+            <div class="text-card-meta" style="margin-top:6px">
+              ${tx.subject ? `<span class="badge badge-purple">📚 ${esc(tx.subject)}</span>` : ''}
+              ${linkedTest ? `<span class="badge badge-green">🔗 ${esc(linkedTest.name)}</span>` : ''}
+              <span class="badge badge-gray">📅 ${esc(tx.createdAt)}</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;flex-shrink:0">
+            <button class="btn btn-ghost btn-sm" onclick="editTextModal('${esc(tx.id)}')">✏️ Tahrirlash</button>
+            <button class="btn btn-red btn-sm" onclick="deleteTextItem('${esc(tx.id)}')">🗑️</button>
+          </div>
+        </div>
+        <div class="text-card-body">${esc(preview)}</div>
+      </div>`;
+  }).join('') || '<div class="empty"><div class="empty-icon">📄</div><p>Hali matn qo\'shilmagan</p></div>';
+
+  return `
+    <div class="page-head">
+      <h1>Test matnlari</h1>
+      <p>O'quvchilar o'qiydigan materiallar</p>
+    </div>
+    <div style="margin-bottom:20px">
+      <button class="btn btn-accent" onclick="openAddTextModal()">➕ Yangi matn qo'shish</button>
+    </div>
+    ${cards}`;
+}
+
+// ─── TEXT MODAL ─────────────────────────────
+let editingTextId = null;
+
+async function openAddTextModal() {
+  editingTextId = null;
+  document.getElementById('textModalTitle').textContent = '📖 Yangi matn';
+  document.getElementById('tmTitle').value = '';
+  document.getElementById('tmSubject').value = '';
+  document.getElementById('tmBody').value = '';
+  await populateLinkedTestSelect('');
+  document.getElementById('textModal').classList.add('open');
+}
+
+async function editTextModal(id) {
+  const texts = await getTexts();
+  const tx = texts.find(x => x.id === id);
+  if (!tx) return;
+  editingTextId = id;
+  document.getElementById('textModalTitle').textContent = '✏️ Matnni tahrirlash';
+  document.getElementById('tmTitle').value = tx.title;
+  document.getElementById('tmSubject').value = tx.subject;
+  document.getElementById('tmBody').value = tx.body;
+  await populateLinkedTestSelect(tx.linkedTestId);
+  document.getElementById('textModal').classList.add('open');
+}
+
+async function populateLinkedTestSelect(selectedId) {
+  const tests = await getTests();
+  const sel = document.getElementById('tmLinkedTest');
+  sel.innerHTML = '<option value="">— Tanlanmagan —</option>' +
+    tests.map(t => `<option value="${esc(t.id)}" ${t.id === selectedId ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
+}
+
+function closeTextModal() {
+  document.getElementById('textModal').classList.remove('open');
+}
+
+async function saveText() {
+  const title = document.getElementById('tmTitle').value.trim();
+  const body  = document.getElementById('tmBody').value.trim();
+  const subject = document.getElementById('tmSubject').value.trim();
+  const linkedTestId = document.getElementById('tmLinkedTest').value;
+
+  if (!title) { toast('Sarlavha kiriting!', 'error'); return; }
+  if (!body)  { toast('Matn kiriting!', 'error'); return; }
+
+  const obj = { id: editingTextId, title, subject, body, linkedTestId };
+  const res = await saveTextToDB(obj, !!editingTextId);
+  if (!res) { toast("Xatolik yuz berdi!", 'error'); return; }
+  closeTextModal();
+  toast(editingTextId ? '✓ Matn yangilandi' : '✓ Matn qo\'shildi', 'success');
+  adminPage('texts');
+}
+
+async function deleteTextItem(id) {
+  openConfirm("Matnni o'chirish", "Bu matnni o'chirishni tasdiqlaysizmi?", async () => {
+    await deleteTextFromDB(id);
+    toast("Matn o'chirildi", 'error');
+    adminPage('texts');
+  });
+}
+
+document.getElementById('textModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeTextModal(); });
+
+// ─── STUDENT TEXTS PAGE ──────────────────────
+async function studentTextsHTML() {
+  const texts = await getTexts();
+  const tests = await getTests();
+
+  if (texts.length === 0) return `
+    <div class="page-head"><h1>Matnlar</h1><p>O'quv materiallari</p></div>
+    <div class="empty"><div class="empty-icon">📚</div><p>Hozircha matnlar qo'shilmagan.</p></div>`;
+
+  const cards = texts.map(tx => {
+    const linkedTest = tests.find(t => t.id === tx.linkedTestId && t.status === 'active');
+    const preview = tx.body.length > 160 ? tx.body.slice(0, 160) + '…' : tx.body;
+    return `
+      <div class="text-card" style="cursor:pointer" onclick="openTextRead('${esc(tx.id)}')">
+        <div class="text-card-header">
+          <div style="flex:1">
+            <div class="text-card-title">📄 ${esc(tx.title)}</div>
+            <div class="text-card-meta" style="margin-top:6px">
+              ${tx.subject ? `<span class="badge badge-purple">📚 ${esc(tx.subject)}</span>` : ''}
+              ${linkedTest ? `<span class="badge badge-green">🔗 Test bor</span>` : ''}
+            </div>
+          </div>
+          <button class="btn btn-accent btn-sm" style="flex-shrink:0" onclick="event.stopPropagation();openTextRead('${esc(tx.id)}')">O'qish →</button>
+        </div>
+        <div class="text-card-body collapsed">${esc(preview)}</div>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="page-head"><h1>O'quv materiallari 📚</h1><p>Matnlarni o'qib, so'ng testga o'ting</p></div>
+    ${cards}`;
+}
+
+let _textsCache = [];
+let _testsCache = [];
+
+async function openTextRead(id) {
+  _textsCache = await getTexts();
+  _testsCache = await getTests();
+  const tx = _textsCache.find(x => x.id === id);
+  if (!tx) return;
+  document.getElementById('trTitle').textContent = tx.title;
+  const subjEl = document.getElementById('trSubject');
+  subjEl.textContent = tx.subject ? '📚 ' + tx.subject : '';
+  subjEl.style.display = tx.subject ? '' : 'none';
+  document.getElementById('trBody').textContent = tx.body;
+
+  const linkedTest = _testsCache.find(t => t.id === tx.linkedTestId && t.status === 'active');
+  const btnArea = document.getElementById('trTestBtn');
+  if (linkedTest) {
+    btnArea.innerHTML = `
+      <button class="btn btn-ghost" onclick="closeTextReadModal()">Yopish</button>
+      <button class="btn btn-accent" onclick="closeTextReadModal();startTest('${esc(linkedTest.id)}')">📝 ${esc(linkedTest.name)} testini boshlash →</button>`;
+  } else {
+    btnArea.innerHTML = `<button class="btn btn-accent" onclick="closeTextReadModal()">✓ O'qib bo'ldim</button>`;
+  }
+  document.getElementById('textReadModal').classList.add('open');
+}
+
+function closeTextReadModal() {
+  document.getElementById('textReadModal').classList.remove('open');
+}
+
+document.getElementById('textReadModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeTextReadModal(); });
+
 async function gradeAnswer(resultId, qIdx, score) {
   const results = await getResults();
   const r = results.find(x => x.id === resultId);
@@ -1338,13 +1603,15 @@ async function deleteTest(id) {
 async function studentPage(page) {
   document.querySelectorAll('#studentScreen .nav-item').forEach(n => n.classList.remove('active'));
   const btns = document.querySelectorAll('#studentScreen .nav-item');
-  if (page === 'tests') btns[0]?.classList.add('active');
-  else btns[1]?.classList.add('active');
+  if (page === 'texts') btns[0]?.classList.add('active');
+  else if (page === 'tests') btns[1]?.classList.add('active');
+  else btns[2]?.classList.add('active');
 
   const c = document.getElementById('studentContent');
   c.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Yuklanmoqda...</div>';
   (async () => {
-    if (page === 'tests') c.innerHTML = await studentTestsHTML();
+    if (page === 'texts') c.innerHTML = await studentTextsHTML();
+    else if (page === 'tests') c.innerHTML = await studentTestsHTML();
     else c.innerHTML = await studentResultsHTML();
   })();
 }
@@ -1643,7 +1910,7 @@ ${esc(wrongOnes)}</div>`;
 
 function backToStudent() {
   showScreen('studentScreen');
-  studentPage('tests');
+  studentPage('texts');
 }
 
 // ═══════════════════════════════════════════
