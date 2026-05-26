@@ -538,6 +538,15 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <textarea class="f-textarea" id="tmBody" style="min-height:220px;line-height:1.7" placeholder="Matn mazmunini shu yerga yozing..."></textarea>
     </div>
     <div class="f-group">
+      <label class="f-label">🎧 Audio fayl (ixtiyoriy)</label>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="file" accept="audio/*" id="tmAudioFile" style="display:none" onchange="handleAudioUpload(this)">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('tmAudioFile').click()" id="tmAudioUploadBtn">📁 Audio yuklash</button>
+        <span id="tmAudioStatus" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <input class="f-input" id="tmAudioUrl" placeholder="Yoki URL kiriting..." style="font-size:12px">
+    </div>
+    <div class="f-group">
       <label class="f-label">Bog'liq test (ixtiyoriy)</label>
       <select class="f-select" id="tmLinkedTest">
         <option value="">— Tanlanmagan —</option>
@@ -559,6 +568,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
       <span class="badge badge-purple" id="trSubject"></span>
+    </div>
+    <div id="trAudioPlayer" style="display:none;margin-bottom:12px">
+      <audio id="trAudio" controls style="width:100%;border-radius:8px"></audio>
     </div>
     <div class="text-read-body" id="trBody"></div>
     <div style="display:flex;gap:10px;justify-content:center;padding-top:16px;border-top:1px solid var(--border)" id="trTestBtn"></div>
@@ -773,6 +785,7 @@ async function getTexts() {
     subject: x.subject || '',
     body: x.body || '',
     linkedTestId: x.linked_test_id || '',
+    audioUrl: x.audio_url || '',
     createdAt: x.created_at ? new Date(x.created_at).toLocaleDateString('uz-UZ') : ''
   }));
 }
@@ -782,7 +795,8 @@ async function saveTextToDB(t, isEdit) {
     title: t.title,
     subject: t.subject,
     body: t.body,
-    linked_test_id: t.linkedTestId || null
+    linked_test_id: t.linkedTestId || null,
+    audio_url: t.audioUrl || null
   };
   if (isEdit) {
     return await sbFetch('texts?id=eq.' + encodeURIComponent(t.id), {
@@ -1255,6 +1269,7 @@ async function openAddTextModal() {
   document.getElementById('tmTitle').value = '';
   document.getElementById('tmSubject').value = '';
   document.getElementById('tmBody').value = '';
+  document.getElementById('tmAudioUrl').value = '';
   await populateLinkedTestSelect('');
   document.getElementById('textModal').classList.add('open');
 }
@@ -1268,6 +1283,7 @@ async function editTextModal(id) {
   document.getElementById('tmTitle').value = tx.title;
   document.getElementById('tmSubject').value = tx.subject;
   document.getElementById('tmBody').value = tx.body;
+  document.getElementById('tmAudioUrl').value = tx.audioUrl || '';
   await populateLinkedTestSelect(tx.linkedTestId);
   document.getElementById('textModal').classList.add('open');
 }
@@ -1288,17 +1304,45 @@ async function saveText() {
   const body  = document.getElementById('tmBody').value.trim();
   const subject = document.getElementById('tmSubject').value.trim();
   const linkedTestId = document.getElementById('tmLinkedTest').value;
+  const audioUrl = document.getElementById('tmAudioUrl').value.trim();
 
   if (!title) { toast('Sarlavha kiriting!', 'error'); return; }
   if (!body)  { toast('Matn kiriting!', 'error'); return; }
 
-  const obj = { id: editingTextId, title, subject, body, linkedTestId };
+  const obj = { id: editingTextId, title, subject, body, linkedTestId, audioUrl };
   const res = await saveTextToDB(obj, !!editingTextId);
   if (!res) { toast("Xatolik yuz berdi!", 'error'); return; }
   closeTextModal();
   toast(editingTextId ? '✓ Matn yangilandi' : '✓ Matn qo\'shildi', 'success');
   adminPage('texts');
 }
+
+async function handleAudioUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('tmAudioStatus');
+  const btn = document.getElementById('tmAudioUploadBtn');
+  btn.disabled = true;
+  status.textContent = '⏳ Yuklanmoqda...';
+  const fileName = 'audio_' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '');
+  try {
+    const res = await fetch(SB_URL + '/storage/v1/object/audio/' + fileName, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + SB_KEY, 'apikey': SB_KEY, 'Content-Type': file.type },
+      body: file
+    });
+    if (!res.ok) throw new Error(await res.text());
+    document.getElementById('tmAudioUrl').value = SB_URL + '/storage/v1/object/public/audio/' + fileName;
+    status.textContent = '✅ ' + file.name;
+  } catch(e) {
+    console.error('Audio upload error:', e);
+    status.textContent = '❌ Xatolik!';
+    toast('Audio yuklashda xatolik!', 'error');
+  }
+  btn.disabled = false;
+  input.value = '';
+}
+
 
 async function deleteTextItem(id) {
   openConfirm("Matnni o'chirish", "Bu matnni o'chirishni tasdiqlaysizmi?", async () => {
@@ -1357,6 +1401,17 @@ async function openTextRead(id) {
   subjEl.style.display = tx.subject ? '' : 'none';
   document.getElementById('trBody').textContent = tx.body;
 
+  // Audio player
+  const audioPlayer = document.getElementById('trAudioPlayer');
+  const audioEl = document.getElementById('trAudio');
+  if (tx.audioUrl) {
+    audioEl.src = tx.audioUrl;
+    audioPlayer.style.display = 'block';
+  } else {
+    audioEl.src = '';
+    audioPlayer.style.display = 'none';
+  }
+
   const linkedTest = _testsCache.find(t => t.id === tx.linkedTestId && t.status === 'active');
   const btnArea = document.getElementById('trTestBtn');
   if (linkedTest) {
@@ -1370,6 +1425,8 @@ async function openTextRead(id) {
 }
 
 function closeTextReadModal() {
+  const audioEl = document.getElementById('trAudio');
+  if (audioEl) { audioEl.pause(); audioEl.src = ''; }
   document.getElementById('textReadModal').classList.remove('open');
 }
 
