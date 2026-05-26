@@ -1403,14 +1403,16 @@ async function openTextRead(id) {
   subjEl.style.display = tx.subject ? '' : 'none';
   document.getElementById('trBody').textContent = tx.body;
 
-  // Audio player
+  // Audio player - har doim avval tozalash
   const audioPlayer = document.getElementById('trAudioPlayer');
   const audioEl = document.getElementById('trAudio');
-  if (tx.audioUrl) {
+  audioEl.pause();
+  audioEl.removeAttribute('src');
+  audioEl.load();
+  if (tx.audioUrl && tx.audioUrl.trim()) {
     audioEl.src = tx.audioUrl;
     audioPlayer.style.display = 'block';
   } else {
-    audioEl.src = '';
     audioPlayer.style.display = 'none';
   }
 
