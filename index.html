@@ -1270,6 +1270,7 @@ async function openAddTextModal() {
   document.getElementById('tmSubject').value = '';
   document.getElementById('tmBody').value = '';
   document.getElementById('tmAudioUrl').value = '';
+  document.getElementById('tmAudioStatus').textContent = '';
   await populateLinkedTestSelect('');
   document.getElementById('textModal').classList.add('open');
 }
@@ -1284,6 +1285,7 @@ async function editTextModal(id) {
   document.getElementById('tmSubject').value = tx.subject;
   document.getElementById('tmBody').value = tx.body;
   document.getElementById('tmAudioUrl').value = tx.audioUrl || '';
+  document.getElementById('tmAudioStatus').textContent = tx.audioUrl ? '✅ Audio mavjud' : '';
   await populateLinkedTestSelect(tx.linkedTestId);
   document.getElementById('textModal').classList.add('open');
 }
